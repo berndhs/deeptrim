@@ -41,6 +41,7 @@
 #include <Qsci/qsciscintilla.h>
 #include <Qsci/qscilexer.h>
 #include <Qsci/qscilexercpp.h>
+#include <QFontDatabase>
 
 using namespace deliberate;
 
@@ -129,6 +130,11 @@ Permute::Run ()
   Settings().setValue ("styles/tooltiplen",tooltiplen);
   show ();
   Settings().sync ();
+  QFontDatabase fdb;
+  QStringList fontlist;
+  fontlist << "Available Fonts:";
+  fontlist +=  fdb.families ();
+  textEdit->setText (fontlist.join("\n"));
 }
 
 void
