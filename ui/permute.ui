@@ -15,7 +15,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="../permute.qrc">
-    <normaloff>:/permute.png</normaloff>:/permute.png</iconset>
+    <normaloff>:/deeptrim.png</normaloff>:/deeptrim.png</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">

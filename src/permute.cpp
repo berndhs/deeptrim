@@ -42,6 +42,7 @@
 #include <Qsci/qscilexer.h>
 #include <Qsci/qscilexercpp.h>
 #include <QFontDatabase>
+#include <QFont>
 
 using namespace deliberate;
 
@@ -134,6 +135,8 @@ Permute::Run ()
   QStringList fontlist;
   fontlist << "Available Fonts:";
   fontlist +=  fdb.families ();
+  QFont freeMono = fdb.font ("FreeMono","Normal",9);
+  textEdit->setFont (freeMono);
   textEdit->setText (fontlist.join("\n"));
 }
 
