@@ -74,6 +74,7 @@ HEADERS = \
           src/deliberate.h \
           src/version.h \
           src/helpview.h \
+          src/perm-editbox.h \
 
 
 SOURCES = \
@@ -85,4 +86,5 @@ SOURCES = \
           src/deliberate.cpp \
           src/version.cpp \
           src/helpview.cpp \
+          src/perm-editbox.cpp \
 

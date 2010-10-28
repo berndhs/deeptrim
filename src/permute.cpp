@@ -25,6 +25,7 @@
 #include "deliberate.h"
 #include "version.h"
 #include "delib-debug.h"
+#include "perm-editbox.h"
 #include <QMessageBox>
 #include <QTimer>
 #include <QFile>
@@ -38,11 +39,10 @@
 #include <QUrl>
 #include <QDesktopServices>
 #include <QTimer>
-#include <Qsci/qsciscintilla.h>
-#include <Qsci/qscilexer.h>
-#include <Qsci/qscilexercpp.h>
 #include <QFontDatabase>
 #include <QFont>
+#include <Qsci/qscilexer.h>
+#include <Qsci/qscilexercpp.h>
 
 using namespace deliberate;
 
@@ -60,7 +60,7 @@ Permute::Permute (QWidget *parent)
   ui.setupUi (this);
   configEdit.setWindowIcon (windowIcon());
   QsciLexer * lex = new QsciLexerCPP (this);
-  textEdit = new QsciScintilla (this);
+  textEdit = new PermEditBox (this);
   QSizePolicy sp = ui.headerList->sizePolicy();
   int horizontal = sp.horizontalStretch ();
   sp.setHorizontalStretch (horizontal * 3);

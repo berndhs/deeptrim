@@ -38,12 +38,14 @@ class QCloseEvent;
 class QIODevice;
 class QAction;
 class QTimer;
-class QsciScintilla;
 
 using namespace deliberate;
 
 namespace permute
 {
+
+class PermEditBox;
+
 class Permute : public QMainWindow 
 {
 Q_OBJECT
@@ -101,7 +103,7 @@ private:
   QApplication  *app;
 
   Ui_PermuteWin  ui;
-  QsciScintilla *textEdit;
+  PermEditBox   *textEdit;
   ConfigEdit     configEdit;
 
   QStringList      configMessages;
