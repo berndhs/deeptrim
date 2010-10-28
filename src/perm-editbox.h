@@ -22,28 +22,57 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
+#include <QDockWidget>
 #include <Qsci/qsciscintilla.h>
 #include <QFont>
+#include "ui_edit-box.h"
+
+class QResizeEvent;
+class QMenuBar;
+class QMenu;
+class QAction;
 
 namespace permute
 {
-class PermEditBox : public QsciScintilla
+class PermEditBox : public QDockWidget, public Ui_EditBox
 {
 Q_OBJECT
 
 public:
 
-  PermEditBox (QWidget *parent=0);
+  PermEditBox (const QString & title, 
+               QWidget * parent = 0, 
+               Qt::WindowFlags flags = 0 );
   
   void SetDefaultFont (const QFont & font, bool setNow=false);
+  void SetText (const QString & text);
+  QString Text ();
+  QsciScintilla & TextEdit ();
 
+  void Clear ();
   bool LoadFile (const QString & filename);
   QString FileName ();
 
+public slots:
+
+  void SetTitle (QString newTitle);
+
+signals:
+
+  void NewTitle (QString newTitle);
+
+protected:
+
+  void resizeEvent (QResizeEvent *event);
+
 private:
 
-  QString   currentFile;
-  QFont     defaultFont;
+  QString        currentFile;
+  QFont          defaultFont;
+  QsciScintilla *scin;
+  QMenuBar      *topMenu;
+  QMenu         *fileMenu;
+  QAction       *actionSave;
 };
 
 } // namespace

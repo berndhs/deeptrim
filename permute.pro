@@ -62,6 +62,7 @@ FORMS = \
         ui/DebugLog.ui \
         ui/config-edit.ui \
         ui/helpwin.ui \
+        ui/edit-box.ui \
         
 
 HEADERS = \

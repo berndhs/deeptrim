@@ -43,6 +43,7 @@
 #include <QFont>
 #include <Qsci/qscilexer.h>
 #include <Qsci/qscilexercpp.h>
+#include <QListWidget>
 
 using namespace deliberate;
 
@@ -59,16 +60,28 @@ Permute::Permute (QWidget *parent)
 {
   ui.setupUi (this);
   configEdit.setWindowIcon (windowIcon());
-  textEdit = new PermEditBox (this);
+  textEdit = new PermEditBox (tr("File Edit"),this);
+  textEdit->setAllowedAreas (Qt::AllDockWidgetAreas);
   QSizePolicy sp = ui.headerList->sizePolicy();
   int horizontal = sp.horizontalStretch ();
   sp.setHorizontalStretch (horizontal * 3);
   textEdit->setSizePolicy (sp);
-  ui.editSplitter->addWidget (textEdit);
+  addDockWidget (Qt::LeftDockWidgetArea, textEdit);
+  SetStoryControlVisible (false);
   Connect ();
   trashCollect = new QTimer (this);
   connect (trashCollect, SIGNAL (timeout()), this, SLOT (CleanTrash()));
   trashCollect->start (2*60*1000);
+}
+
+void
+Permute::SetStoryControlVisible (bool visible)
+{
+  ui.headerList->setVisible (visible);
+  ui.newButton->setVisible (visible);
+  ui.paraNameLabel->setVisible (visible);
+  ui.storeButton->setVisible (visible);
+  ui.textName->setVisible (visible);
 }
 
 void
@@ -136,7 +149,7 @@ Permute::Run ()
   fontlist +=  fdb.families ();
   QFont freeMono = fdb.font ("FreeMono","Normal",9);
   textEdit->SetDefaultFont (freeMono, true);
-  textEdit->setText (fontlist.join("\n"));
+  textEdit->SetText (fontlist.join("\n"));
 }
 
 void
@@ -207,7 +220,7 @@ void
 Permute::StorePara ()
 {
   QString pname = ui.textName->text();
-  QString body = textEdit->text ();
+  QString body = textEdit->Text ();
   if (pname.length() == 0) {
     pname = tr ("Paragraph %1").arg (nextPara);
     ui.textName->setText (pname);
@@ -223,10 +236,10 @@ Permute::StorePara ()
 void
 Permute::NewPara ()
 {
-  if (textEdit->text().trimmed ().length() > 0) {
+  if (textEdit->Text().trimmed ().length() > 0) {
     StorePara();
   }
-  textEdit->clear ();
+  textEdit->Clear ();
   QString pname = tr("Paragraph %1").arg (nextPara);
   ui.textName->setText (pname);
   nextPara++;
@@ -241,7 +254,7 @@ Permute::ClickedHeader (QListWidgetItem *item)
 void
 Permute::OpenItemPara (const QListWidgetItem *item)
 {
-  QString oldbody = textEdit->text().trimmed();
+  QString oldbody = textEdit->Text().trimmed();
   if (oldbody.length() > 0) {
     StorePara ();
   }
@@ -249,7 +262,7 @@ Permute::OpenItemPara (const QListWidgetItem *item)
     QString head = item->text ();
     if (paragraphs.contains (head)) {
       QString body = paragraphs [head];
-      textEdit->setText (body);
+      textEdit->SetText (body);
       ui.textName->setText (head);
     }
   }
@@ -371,7 +384,7 @@ Permute::ImportPara ()
     QByteArray body = file.readAll();
     if (body.size() > 0) {
       NewPara ();
-      textEdit->setText (body);
+      textEdit->SetText (body);
     }
   }
 }
@@ -405,8 +418,8 @@ Permute::OpenFile ()
     bool ok = textEdit->LoadFile (oldFile);
     qDebug () << "LoadFile says " << ok;
     qDebug () << "textEdit says file is " << textEdit->FileName();
-    if (textEdit->lexer()) {
-      qDebug () << "textEdit lexer is " << textEdit->lexer()->language();
+    if (textEdit->TextEdit().lexer()) {
+      qDebug () << "textEdit lexer is " << textEdit->TextEdit().lexer()->language();
     } else {
       qDebug () << "textEdit has no lexer";
     }
@@ -441,7 +454,7 @@ Permute::ReadDom (QIODevice * source)
   QDomDocument  doc;
   doc.setContent (source);
   ui.headerList->clear ();
-  textEdit->clear ();
+  textEdit->Clear ();
   ui.textName->clear ();
   paragraphs.clear ();
   QDomElement main = doc.documentElement ();

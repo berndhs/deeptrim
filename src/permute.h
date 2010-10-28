@@ -93,6 +93,7 @@ private slots:
 private:
 
   void  Connect ();
+  void  SetStoryControlVisible (bool visible);
   void  CloseCleanup ();
   void  WriteDom (QIODevice * dest);
   void  WriteText (QIODevice * dest);

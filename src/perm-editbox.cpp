@@ -26,14 +26,38 @@
 #include <Qsci/qscilexercpp.h>
 #include <QFile>
 #include <QFileInfo>
+#include <QResizeEvent>
+#include <QAction>
+#include <QMenuBar>
 #include "lexer-chooser.h"
 
 namespace permute
 {
 
-PermEditBox::PermEditBox (QWidget *parent)
-  :QsciScintilla (parent)
+PermEditBox::PermEditBox (const QString & title, 
+               QWidget * parent, 
+               Qt::WindowFlags flags)
+  :QDockWidget (title, parent, flags),
+   scin (0),
+   topMenu (0)
 {
+  setupUi (this);
+  topMenu = new QMenuBar (dockWidgetContents);
+  fileMenu = new QMenu (tr("File..."), topMenu);
+  actionSave = new QAction (tr("Save"),this);
+  fileMenu->addAction (actionSave);
+  topMenu->addAction (fileMenu->menuAction());
+  gridLayout->addWidget (topMenu,0,0,1,1);
+  scin = new QsciScintilla (this);
+  gridLayout->addWidget (scin, 1,0,1,1);
+  connect (this, SIGNAL (NewTitle (QString)), 
+          this, SLOT (SetTitle (QString)));
+}
+
+void
+PermEditBox::SetText (const QString & text)
+{
+  scin->setText (text);
 }
 
 void
@@ -41,8 +65,40 @@ PermEditBox::SetDefaultFont (const QFont & font, bool setNow)
 {
   defaultFont = font;
   if (setNow) {
-    setFont (defaultFont);
+    scin->setFont (defaultFont);
   }
+}
+
+void
+PermEditBox::SetTitle (QString newTitle)
+{
+  setWindowTitle (newTitle);
+}
+
+QsciScintilla &
+PermEditBox::TextEdit ()
+{
+  return *scin;
+}
+
+void
+PermEditBox::resizeEvent (QResizeEvent *event)
+{
+  QDockWidget::resizeEvent (event);
+}
+
+QString
+PermEditBox::Text ()
+{
+  return scin->text();
+}
+
+void
+PermEditBox::Clear ()
+{
+  scin->clear ();
+  scin->setLexer (0);
+  currentFile.clear ();
 }
 
 bool
@@ -59,7 +115,7 @@ PermEditBox::LoadFile (const QString & filename)
       file.close ();
       return false;
     }
-    setText (bytes);
+    scin->setText (bytes);
     QsciLexer * lex (0);
     if (suf.length() > 0) {
       lex = LexerChooser::Ref().NewLexerBySuffix (this,suf.toLower());
@@ -73,8 +129,9 @@ PermEditBox::LoadFile (const QString & filename)
         lex = LexerChooser::Ref().NewLexerByName (this, "XML");
       }
     }
-    setLexer (lex);
+    scin->setLexer (lex);
     currentFile = file.fileName();
+    emit NewTitle (currentFile);
     return true;
   }
   return ok;
