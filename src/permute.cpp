@@ -59,14 +59,12 @@ Permute::Permute (QWidget *parent)
 {
   ui.setupUi (this);
   configEdit.setWindowIcon (windowIcon());
-  QsciLexer * lex = new QsciLexerCPP (this);
   textEdit = new PermEditBox (this);
   QSizePolicy sp = ui.headerList->sizePolicy();
   int horizontal = sp.horizontalStretch ();
   sp.setHorizontalStretch (horizontal * 3);
   textEdit->setSizePolicy (sp);
   ui.editSplitter->addWidget (textEdit);
-  textEdit->setLexer (lex);
   Connect ();
   trashCollect = new QTimer (this);
   connect (trashCollect, SIGNAL (timeout()), this, SLOT (CleanTrash()));
@@ -86,6 +84,7 @@ Permute::Connect ()
 
   connect (ui.actionSave, SIGNAL (triggered()), this, SLOT (Save()));
   connect (ui.actionOpen, SIGNAL (triggered()), this, SLOT (Load()));
+  connect (ui.actionOpenFile, SIGNAL (triggered()), this, SLOT (OpenFile()));
   connect (ui.actionWriteTxt, SIGNAL (triggered()), this, SLOT (SaveText()));
   connect (ui.actionWriteHtml, SIGNAL (triggered()),
            this, SLOT (SaveHtml()));
@@ -136,7 +135,7 @@ Permute::Run ()
   fontlist << "Available Fonts:";
   fontlist +=  fdb.families ();
   QFont freeMono = fdb.font ("FreeMono","Normal",9);
-  textEdit->setFont (freeMono);
+  textEdit->SetDefaultFont (freeMono, true);
   textEdit->setText (fontlist.join("\n"));
 }
 
@@ -391,6 +390,26 @@ Permute::Load ()
     ReadDom (&file);
     file.close ();
     saveFile = oldFile;
+  }
+}
+
+void
+Permute::OpenFile ()
+{
+  QString oldFile;
+  QFileInfo info (saveFile);
+  oldFile = QFileDialog::getOpenFileName (this, tr("Read File"),
+                             info.path(),
+                             tr ("Any file (*)"));
+  if (oldFile.length() > 0) {
+    bool ok = textEdit->LoadFile (oldFile);
+    qDebug () << "LoadFile says " << ok;
+    qDebug () << "textEdit says file is " << textEdit->FileName();
+    if (textEdit->lexer()) {
+      qDebug () << "textEdit lexer is " << textEdit->lexer()->language();
+    } else {
+      qDebug () << "textEdit has no lexer";
+    }
   }
 }
 

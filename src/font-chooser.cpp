@@ -1,5 +1,4 @@
-#ifndef PERM_EDITBOX_H
-#define PERM_EDITBOX_H
+
 
 /****************************************************************
  * This file is distributed under the following license:
@@ -22,30 +21,3 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#include <Qsci/qsciscintilla.h>
-#include <QFont>
-
-namespace permute
-{
-class PermEditBox : public QsciScintilla
-{
-Q_OBJECT
-
-public:
-
-  PermEditBox (QWidget *parent=0);
-  
-  void SetDefaultFont (const QFont & font, bool setNow=false);
-
-  bool LoadFile (const QString & filename);
-  QString FileName ();
-
-private:
-
-  QString   currentFile;
-  QFont     defaultFont;
-};
-
-} // namespace
-
-#endif

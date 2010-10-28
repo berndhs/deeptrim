@@ -24,6 +24,9 @@
 
 #include <Qsci/qscilexer.h>
 #include <Qsci/qscilexercpp.h>
+#include <QFile>
+#include <QFileInfo>
+#include "lexer-chooser.h"
 
 namespace permute
 {
@@ -31,6 +34,56 @@ namespace permute
 PermEditBox::PermEditBox (QWidget *parent)
   :QsciScintilla (parent)
 {
+}
+
+void
+PermEditBox::SetDefaultFont (const QFont & font, bool setNow)
+{
+  defaultFont = font;
+  if (setNow) {
+    setFont (defaultFont);
+  }
+}
+
+bool
+PermEditBox::LoadFile (const QString & filename)
+{
+  QFileInfo  info (filename);
+  QString suf = info.suffix ();
+  QFile file (filename);
+  bool ok = file.open (QFile::ReadOnly);
+  if (ok) {
+    quint64 size = file.size();
+    QByteArray bytes = file.readAll();
+    if (bytes.size() == 0 && size != 0) {
+      file.close ();
+      return false;
+    }
+    setText (bytes);
+    QsciLexer * lex (0);
+    if (suf.length() > 0) {
+      lex = LexerChooser::Ref().NewLexerBySuffix (this,suf.toLower());
+    } else if (info.fileName().toLower () == "makefile") {
+      lex = LexerChooser::Ref().NewLexerByName (this,"Makefile");
+    } else {
+      if (bytes.startsWith ('#')) {
+        lex = LexerChooser::Ref().NewLexerByName (this,"Bash");
+      } else if (bytes.startsWith ("<?xml ") ||
+                 bytes.startsWith ("<!DOCTYPE")) {
+        lex = LexerChooser::Ref().NewLexerByName (this, "XML");
+      }
+    }
+    setLexer (lex);
+    currentFile = file.fileName();
+    return true;
+  }
+  return ok;
+}
+
+QString
+PermEditBox::FileName ()
+{
+  return currentFile;
 }
 
 } // namespace

@@ -87,6 +87,7 @@ private slots:
   void SaveHtml ();
   void Load ();
   void ImportPara ();
+  void OpenFile ();
   void CleanTrash ();
 
 private:

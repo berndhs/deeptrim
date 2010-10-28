@@ -1,5 +1,5 @@
 #
-# nothing application
+# deeptrim application
 #
 
 #/****************************************************************
@@ -75,6 +75,9 @@ HEADERS = \
           src/version.h \
           src/helpview.h \
           src/perm-editbox.h \
+          src/lexer-chooser.h \
+          src/all-lexers.h \
+          src/font-chooser.h \
 
 
 SOURCES = \
@@ -87,4 +90,6 @@ SOURCES = \
           src/version.cpp \
           src/helpview.cpp \
           src/perm-editbox.cpp \
+          src/lexer-chooser.cpp \
+          src/font-chooser.cpp \
 
