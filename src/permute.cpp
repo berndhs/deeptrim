@@ -52,6 +52,7 @@ namespace permute
 Permute::Permute (QWidget *parent)
   :QMainWindow (parent),
    app (0),
+   textEdit (0),
    configEdit (this),
    again (false),
    nextPara (1),
@@ -60,13 +61,8 @@ Permute::Permute (QWidget *parent)
 {
   ui.setupUi (this);
   configEdit.setWindowIcon (windowIcon());
-  textEdit = new PermEditBox (tr("File Edit"),this);
-  textEdit->setAllowedAreas (Qt::AllDockWidgetAreas);
-  QSizePolicy sp = ui.headerList->sizePolicy();
-  int horizontal = sp.horizontalStretch ();
-  sp.setHorizontalStretch (horizontal * 3);
-  textEdit->setSizePolicy (sp);
-  addDockWidget (Qt::LeftDockWidgetArea, textEdit);
+  textEdit = new PermEditBox ("Paragraph",this);
+  textEdit->hide ();
   SetStoryControlVisible (false);
   Connect ();
   trashCollect = new QTimer (this);
@@ -143,13 +139,6 @@ Permute::Run ()
   Settings().setValue ("styles/tooltiplen",tooltiplen);
   show ();
   Settings().sync ();
-  QFontDatabase fdb;
-  QStringList fontlist;
-  fontlist << "Available Fonts:";
-  fontlist +=  fdb.families ();
-  QFont freeMono = fdb.font ("FreeMono","Normal",9);
-  textEdit->SetDefaultFont (freeMono, true);
-  textEdit->SetText (fontlist.join("\n"));
 }
 
 void
@@ -415,13 +404,17 @@ Permute::OpenFile ()
                              info.path(),
                              tr ("Any file (*)"));
   if (oldFile.length() > 0) {
-    bool ok = textEdit->LoadFile (oldFile);
-    qDebug () << "LoadFile says " << ok;
-    qDebug () << "textEdit says file is " << textEdit->FileName();
-    if (textEdit->TextEdit().lexer()) {
-      qDebug () << "textEdit lexer is " << textEdit->TextEdit().lexer()->language();
+    PermEditBox * newEdit = new PermEditBox (tr("File Edit"),this);
+    bool ok = newEdit->LoadFile (oldFile);
+    if (ok) {
+      newEdit->setAllowedAreas (Qt::AllDockWidgetAreas);
+      newEdit->setFeatures (QDockWidget::DockWidgetClosable 
+                           | QDockWidget::DockWidgetMovable
+                           | QDockWidget::DockWidgetFloatable
+                           );
+      addDockWidget (Qt::LeftDockWidgetArea, newEdit);
     } else {
-      qDebug () << "textEdit has no lexer";
+      delete newEdit;
     }
   }
 }

@@ -29,6 +29,7 @@
 #include <QResizeEvent>
 #include <QAction>
 #include <QMenuBar>
+#include <QFontComboBox>
 #include "lexer-chooser.h"
 
 namespace permute
@@ -50,6 +51,8 @@ PermEditBox::PermEditBox (const QString & title,
   gridLayout->addWidget (topMenu,0,0,1,1);
   scin = new QsciScintilla (this);
   gridLayout->addWidget (scin, 1,0,1,1);
+  QFontComboBox * fontBox = new QFontComboBox (this);
+  gridLayout->addWidget (fontBox, 2,0,1,1);
   connect (this, SIGNAL (NewTitle (QString)), 
           this, SLOT (SetTitle (QString)));
 }
@@ -131,7 +134,7 @@ PermEditBox::LoadFile (const QString & filename)
     }
     scin->setLexer (lex);
     currentFile = file.fileName();
-    emit NewTitle (currentFile);
+    emit NewTitle (QFileInfo (currentFile).fileName());
     return true;
   }
   return ok;
