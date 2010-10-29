@@ -32,6 +32,7 @@
 #include <QFontComboBox>
 #include <QDebug>
 #include <QIcon>
+#include <QMessageBox>
 #include "lexer-chooser.h"
 
 namespace permute
@@ -48,14 +49,20 @@ PermEditBox::PermEditBox (const QString & title,
   setTitleBarWidget (0);
   topMenu = new QMenuBar (dockWidgetContents);
   fileMenu = new QMenu (tr("File..."), topMenu);
+  configMenu = new QMenu (tr("Config"), topMenu);
   actionSave = new QAction (tr("Save"),this);
+  actionFont = new QAction (tr("Font"),this);
+  actionLang = new QAction (tr("File Type"),this);
   iconAction = new QAction (parent->windowIcon(), tr(""),this);
   iconAction->setVisible (false);
   iconAction->setToolTip (tr("%1 Editor")
                           .arg(QApplication::applicationName()));
   fileMenu->addAction (actionSave);
+  configMenu->addAction (actionFont);
+  configMenu->addAction (actionLang);
   topMenu->addAction (iconAction);
   topMenu->addAction (fileMenu->menuAction());
+  topMenu->addAction (configMenu->menuAction());
   gridLayout->addWidget (topMenu,0,0,1,1);
   scin = new QsciScintilla (this);
   gridLayout->addWidget (scin, 1,0,1,1);
@@ -71,6 +78,14 @@ PermEditBox::Connect ()
            this, SLOT (DockMoved (Qt::DockWidgetArea)));
   connect (this, SIGNAL (topLevelChanged (bool)),
            this, SLOT (TopChanged (bool)));
+  connect (actionSave, SIGNAL (triggered()),
+           this, SLOT (SaveAction()));
+  connect (actionFont, SIGNAL (triggered()),
+           this, SLOT (FontAction ()));
+  connect (actionLang, SIGNAL (triggered()),
+           this, SLOT (LangAction ()));
+  connect (iconAction, SIGNAL (triggered()),
+           this, SLOT (IconAction ()));
 }
 
 void
@@ -106,6 +121,55 @@ PermEditBox::TopChanged (bool isTop)
   if (isTop) {
     setWindowIcon (parentWidget()->windowIcon());
   }
+}
+
+void
+PermEditBox::FontAction ()
+{
+  qDebug () << " Font Action called";
+  QFont defont;
+  if (scin->lexer()) {
+    defont = scin->lexer()->defaultFont();
+    qDebug () << " Lexer font " << defont; 
+  } else {
+    defont = scin->font();
+    qDebug () << " Base font " << defont; 
+  }
+}
+
+void
+PermEditBox::LangAction ()
+{
+  qDebug () << " Lang Action called";
+  QString lang (tr("none"));
+  if (scin->lexer()) {
+    lang = scin->lexer()->language();
+  }
+  int ans = QMessageBox::question (this, 
+                            tr("File Format"),
+                            tr("Format\n\"%1\"\nChange ?").arg(lang),
+                              QMessageBox::Yes 
+                            | QMessageBox::No 
+                            | QMessageBox::Cancel);
+  if (ans & QMessageBox::Yes) {
+    QsciLexer * newLex = LexerChooser::Ref().NewLexerDialog (this, lang);
+    if (newLex) {
+      scin->setLexer (newLex);
+    }
+  }
+}
+
+void
+PermEditBox::IconAction ()
+{
+  qDebug () << " IconAction ";
+  setFloating (false);
+}
+
+void
+PermEditBox::SaveAction ()
+{
+  qDebug () << "Save Action called";
 }
 
 void

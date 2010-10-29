@@ -68,6 +68,18 @@ LexerChooser::NewLexerBySuffix (QWidget *parent, const QString & kind)
   }
 }
 
+QsciLexer *
+LexerChooser::NewLexerDialog (QWidget *parent, const QString &kind )
+{
+  QStringList languages;
+  NewFuncMapType::iterator nit;
+  for (nit = newByName.begin(); nit != newByName.end(); nit++) {
+     languages << nit->first;
+  }
+  qDebug () << " new lexer dialog choices " << languages;
+  return 0;
+}
+
 LexerChooser::LexerChooser ()
 {
   InitDefaultNames ();

@@ -61,6 +61,10 @@ private slots:
 
   void DockMoved (Qt::DockWidgetArea area);
   void TopChanged (bool isTop);
+  void FontAction ();
+  void LangAction ();
+  void IconAction ();
+  void SaveAction ();
 
 signals:
 
@@ -79,8 +83,11 @@ private:
   QsciScintilla *scin;
   QMenuBar      *topMenu;
   QMenu         *fileMenu;
+  QMenu         *configMenu;
   QAction       *iconAction;
   QAction       *actionSave;
+  QAction       *actionFont;
+  QAction       *actionLang;
 };
 
 } // namespace
