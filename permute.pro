@@ -63,6 +63,7 @@ FORMS = \
         ui/config-edit.ui \
         ui/helpwin.ui \
         ui/edit-box.ui \
+        ui/pick-string.ui \
         
 
 HEADERS = \
@@ -79,6 +80,7 @@ HEADERS = \
           src/lexer-chooser.h \
           src/all-lexers.h \
           src/font-chooser.h \
+          src/pick-string.h \
 
 
 SOURCES = \
@@ -93,4 +95,5 @@ SOURCES = \
           src/perm-editbox.cpp \
           src/lexer-chooser.cpp \
           src/font-chooser.cpp \
+          src/pick-string.cpp \
 

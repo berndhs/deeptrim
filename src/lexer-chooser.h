@@ -35,9 +35,10 @@ class  LexerChooser
 {
 public:
 
-  QsciLexer * NewLexerByName (QWidget *parent, const QString & kind);
-  QsciLexer * NewLexerBySuffix (QWidget *parent, const QString & kind);
-  QsciLexer * NewLexerDialog (QWidget *parent, 
+  QsciLexer * NewLexerByName (QWidget *lexParent, const QString & kind);
+  QsciLexer * NewLexerBySuffix (QWidget *lexParent, const QString & kind);
+  QsciLexer * NewLexerDialog (QWidget *dialogParent,
+                              QWidget *lexParent, 
                               const QString & kind = QString ());
 
 static LexerChooser & Ref ();

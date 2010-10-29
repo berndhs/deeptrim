@@ -152,7 +152,7 @@ PermEditBox::LangAction ()
                             | QMessageBox::No 
                             | QMessageBox::Cancel);
   if (ans & QMessageBox::Yes) {
-    QsciLexer * newLex = LexerChooser::Ref().NewLexerDialog (this, lang);
+    QsciLexer * newLex = LexerChooser::Ref().NewLexerDialog (this, scin, lang);
     if (newLex) {
       scin->setLexer (newLex);
     }

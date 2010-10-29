@@ -23,6 +23,7 @@
  ****************************************************************/
 
 #include <QDebug>
+#include "pick-string.h"
 
 namespace permute
 {
@@ -49,34 +50,46 @@ LexerChooser::Instance ()
 }
 
 QsciLexer * 
-LexerChooser::NewLexerByName (QWidget *parent, const QString & kind)
+LexerChooser::NewLexerByName (QWidget *lexParent, const QString & kind)
 {
   if (newByName.find (kind) != newByName.end()) {
-    return (*newByName[kind]) (parent);
+    return (*newByName[kind]) (lexParent);
   } else {
     return 0;
   }
 }
 
 QsciLexer *
-LexerChooser::NewLexerBySuffix (QWidget *parent, const QString & kind)
+LexerChooser::NewLexerBySuffix (QWidget *lexParent, const QString & kind)
 {
   if (newBySuffix.find (kind) != newBySuffix.end()) {
-    return (*newBySuffix [kind])(parent);
+    return (*newBySuffix [kind])(lexParent);
   } else {
     return 0;
   }
 }
 
 QsciLexer *
-LexerChooser::NewLexerDialog (QWidget *parent, const QString &kind )
+LexerChooser::NewLexerDialog (QWidget *dialogParent,
+                              QWidget *lexParent, 
+                              const QString &kind )
 {
   QStringList languages;
   NewFuncMapType::iterator nit;
   for (nit = newByName.begin(); nit != newByName.end(); nit++) {
      languages << nit->first;
   }
-  qDebug () << " new lexer dialog choices " << languages;
+  PickString  picker (dialogParent);
+  picker.SetTitle (QObject::tr("Choose File Format"));
+  int picked = picker.Pick (languages);
+  if (picked) {
+    QString lang = picker.Choice ();
+    nit = newByName.find (lang);
+    if (nit != newByName.end()) {
+      QsciLexer * newLex = nit->second (lexParent);
+      return newLex;
+    }
+  }
   return 0;
 }
 
