@@ -22,6 +22,8 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
+#include <Qsci/qsciglobal.h>
+#pragma message "Using QSCINTILLA version " QSCINTILLA_VERSION_STR
 #include <Qsci/qscilexer.h>
 #include "all-lexers.h"
 #include <map>

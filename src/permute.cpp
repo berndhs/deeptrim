@@ -60,6 +60,7 @@ Permute::Permute (QWidget *parent)
    trashCollect (0)
 {
   ui.setupUi (this);
+  ui.menuStory->setVisible (false);
   configEdit.setWindowIcon (windowIcon());
   textEdit = new PermEditBox ("Paragraph",this);
   textEdit->hide ();

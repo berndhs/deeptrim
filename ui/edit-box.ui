@@ -27,6 +27,7 @@
    <layout class="QGridLayout" name="gridLayout"/>
   </widget>
  </widget>
+ <layoutdefault spacing="1" margin="1"/>
  <resources>
   <include location="../permute.qrc"/>
  </resources>
