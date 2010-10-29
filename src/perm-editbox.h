@@ -57,6 +57,11 @@ public slots:
 
   void SetTitle (QString newTitle);
 
+private slots:
+
+  void DockMoved (Qt::DockWidgetArea area);
+  void TopChanged (bool isTop);
+
 signals:
 
   void NewTitle (QString newTitle);
@@ -67,11 +72,14 @@ protected:
 
 private:
 
+  void Connect ();
+
   QString        currentFile;
   QFont          defaultFont;
   QsciScintilla *scin;
   QMenuBar      *topMenu;
   QMenu         *fileMenu;
+  QAction       *iconAction;
   QAction       *actionSave;
 };
 

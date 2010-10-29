@@ -10,13 +10,25 @@
     <height>300</height>
    </rect>
   </property>
+  <property name="windowIcon">
+   <iconset resource="../permute.qrc">
+    <normaloff>:/deeptrim.png</normaloff>:/deeptrim.png</iconset>
+  </property>
+  <property name="floating">
+   <bool>false</bool>
+  </property>
+  <property name="features">
+   <set>QDockWidget::AllDockWidgetFeatures</set>
+  </property>
   <property name="windowTitle">
-   <string>DockWidget</string>
+   <string>File Edit</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QGridLayout" name="gridLayout"/>
   </widget>
  </widget>
- <resources/>
+ <resources>
+  <include location="../permute.qrc"/>
+ </resources>
  <connections/>
 </ui>

@@ -30,6 +30,8 @@
 #include <QAction>
 #include <QMenuBar>
 #include <QFontComboBox>
+#include <QDebug>
+#include <QIcon>
 #include "lexer-chooser.h"
 
 namespace permute
@@ -39,22 +41,36 @@ PermEditBox::PermEditBox (const QString & title,
                QWidget * parent, 
                Qt::WindowFlags flags)
   :QDockWidget (title, parent, flags),
-   scin (0),
-   topMenu (0)
+   scin (0)
 {
   setupUi (this);
+  setWindowIcon (parent->windowIcon());
+  setTitleBarWidget (0);
   topMenu = new QMenuBar (dockWidgetContents);
   fileMenu = new QMenu (tr("File..."), topMenu);
   actionSave = new QAction (tr("Save"),this);
+  iconAction = new QAction (parent->windowIcon(), tr(""),this);
+  iconAction->setVisible (false);
+  iconAction->setToolTip (tr("%1 Editor")
+                          .arg(QApplication::applicationName()));
   fileMenu->addAction (actionSave);
+  topMenu->addAction (iconAction);
   topMenu->addAction (fileMenu->menuAction());
   gridLayout->addWidget (topMenu,0,0,1,1);
   scin = new QsciScintilla (this);
   gridLayout->addWidget (scin, 1,0,1,1);
-  QFontComboBox * fontBox = new QFontComboBox (this);
-  gridLayout->addWidget (fontBox, 2,0,1,1);
+  Connect ();
+}
+
+void
+PermEditBox::Connect ()
+{
   connect (this, SIGNAL (NewTitle (QString)), 
           this, SLOT (SetTitle (QString)));
+  connect (this, SIGNAL (dockLocationChanged (Qt::DockWidgetArea)),
+           this, SLOT (DockMoved (Qt::DockWidgetArea)));
+  connect (this, SIGNAL (topLevelChanged (bool)),
+           this, SLOT (TopChanged (bool)));
 }
 
 void
@@ -69,6 +85,26 @@ PermEditBox::SetDefaultFont (const QFont & font, bool setNow)
   defaultFont = font;
   if (setNow) {
     scin->setFont (defaultFont);
+  }
+}
+
+void
+PermEditBox::DockMoved (Qt::DockWidgetArea area)
+{
+  qDebug () << "Dock Moved to " << area;
+  if (isWindow()) {
+    setWindowIcon (parentWidget()->windowIcon());
+qDebug () << windowIcon();
+  }
+}
+
+void
+PermEditBox::TopChanged (bool isTop)
+{
+  qDebug () << " Top Changed " << isTop;
+  iconAction->setVisible (isTop);
+  if (isTop) {
+    setWindowIcon (parentWidget()->windowIcon());
   }
 }
 
