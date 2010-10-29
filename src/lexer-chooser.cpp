@@ -125,14 +125,16 @@ LexerChooser::InitDefaultNames ()
   newByName ["Properties"] = LexerChooser::NewLexerProperties; 
   newByName ["Python"] = LexerChooser::NewLexerPython; 
   newByName ["Ruby"] = LexerChooser::NewLexerRuby; 
-  newByName ["Spice"] = LexerChooser::NewLexerSpice; 
   newByName ["SQL"] = LexerChooser::NewLexerSQL; 
   newByName ["TCL"] = LexerChooser::NewLexerTCL; 
   newByName ["TeX"] = LexerChooser::NewLexerTeX; 
-  newByName ["Verilog"] = LexerChooser::NewLexerVerilog; 
   newByName ["VHDL"] = LexerChooser::NewLexerVHDL; 
   newByName ["XML"] = LexerChooser::NewLexerXML; 
   newByName ["YAML"] = LexerChooser::NewLexerYAML; 
+#if QSCINTILLA_VERSION >= 0x020404
+  newByName ["Spice"] = LexerChooser::NewLexerSpice; 
+  newByName ["Verilog"] = LexerChooser::NewLexerVerilog; 
+#endif
 }
 
 void
@@ -356,14 +358,6 @@ LexerChooser::NewLexerRuby (QWidget * parent)
 
 
 QsciLexer *
-LexerChooser::NewLexerSpice (QWidget * parent)
-{
-  return new QsciLexerSpice (parent);
-}
-
-
-
-QsciLexer *
 LexerChooser::NewLexerSQL (QWidget * parent)
 {
   return new QsciLexerSQL (parent);
@@ -386,12 +380,21 @@ LexerChooser::NewLexerTeX (QWidget * parent)
 }
 
 
+#if QSCINTILLA_VERSION >= 0x020404
+QsciLexer *
+LexerChooser::NewLexerSpice (QWidget * parent)
+{
+  return new QsciLexerSpice (parent);
+}
+
+
 
 QsciLexer *
 LexerChooser::NewLexerVerilog (QWidget * parent)
 {
   return new QsciLexerVerilog (parent);
 }
+#endif
 
 
 

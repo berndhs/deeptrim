@@ -23,7 +23,6 @@
  ****************************************************************/
 
 #include <Qsci/qsciglobal.h>
-#pragma message "Using QSCINTILLA version " QSCINTILLA_VERSION_STR
 #include <Qsci/qscilexer.h>
 #include "all-lexers.h"
 #include <map>
@@ -81,14 +80,16 @@ private:
   static QsciLexer * NewLexerProperties (QWidget *parent);
   static QsciLexer * NewLexerPython (QWidget *parent);
   static QsciLexer * NewLexerRuby (QWidget *parent);
-  static QsciLexer * NewLexerSpice (QWidget *parent);
   static QsciLexer * NewLexerSQL (QWidget *parent);
   static QsciLexer * NewLexerTCL (QWidget *parent);
   static QsciLexer * NewLexerTeX (QWidget *parent);
-  static QsciLexer * NewLexerVerilog (QWidget *parent);
   static QsciLexer * NewLexerVHDL (QWidget *parent);
   static QsciLexer * NewLexerXML (QWidget *parent);
   static QsciLexer * NewLexerYAML (QWidget *parent);
+#if QSCINTILLA_VERSION >= 0x020404
+  static QsciLexer * NewLexerSpice (QWidget *parent);
+  static QsciLexer * NewLexerVerilog (QWidget *parent);
+#endif
   
 };
 

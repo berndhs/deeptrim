@@ -23,6 +23,7 @@
  ****************************************************************/
 
 
+#include <Qsci/qsciglobal.h>
 #include <Qsci/qscilexerbash.h>
 #include <Qsci/qscilexerbatch.h>
 #include <Qsci/qscilexercmake.h>
@@ -47,13 +48,15 @@
 #include <Qsci/qscilexerproperties.h>
 #include <Qsci/qscilexerpython.h>
 #include <Qsci/qscilexerruby.h>
-#include <Qsci/qscilexerspice.h>
 #include <Qsci/qscilexersql.h>
 #include <Qsci/qscilexertcl.h>
 #include <Qsci/qscilexertex.h>
-#include <Qsci/qscilexerverilog.h>
 #include <Qsci/qscilexervhdl.h>
 #include <Qsci/qscilexerxml.h>
 #include <Qsci/qscilexeryaml.h>
+#if QSCINTILLA_VERSION >= 0x020404
+#include <Qsci/qscilexerverilog.h>
+#include <Qsci/qscilexerspice.h>
+#endif
 
 #endif
