@@ -65,6 +65,7 @@ private slots:
   void LangAction ();
   void IconAction ();
   void SaveAction ();
+  void SaveAsAction ();
 
 signals:
 
@@ -86,6 +87,7 @@ private:
   QMenu         *configMenu;
   QAction       *iconAction;
   QAction       *actionSave;
+  QAction       *actionSaveAs;
   QAction       *actionFont;
   QAction       *actionLang;
 };

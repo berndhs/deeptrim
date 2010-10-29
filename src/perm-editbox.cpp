@@ -33,6 +33,7 @@
 #include <QDebug>
 #include <QIcon>
 #include <QMessageBox>
+#include <QFileDialog>
 #include "lexer-chooser.h"
 
 namespace permute
@@ -51,6 +52,7 @@ PermEditBox::PermEditBox (const QString & title,
   fileMenu = new QMenu (tr("File..."), topMenu);
   configMenu = new QMenu (tr("Config"), topMenu);
   actionSave = new QAction (tr("Save"),this);
+  actionSaveAs = new QAction (tr("Save As..."),this);
   actionFont = new QAction (tr("Font"),this);
   actionLang = new QAction (tr("File Type"),this);
   iconAction = new QAction (parent->windowIcon(), tr(""),this);
@@ -58,6 +60,7 @@ PermEditBox::PermEditBox (const QString & title,
   iconAction->setToolTip (tr("%1 Editor")
                           .arg(QApplication::applicationName()));
   fileMenu->addAction (actionSave);
+  fileMenu->addAction (actionSaveAs);
   configMenu->addAction (actionFont);
   configMenu->addAction (actionLang);
   topMenu->addAction (iconAction);
@@ -80,6 +83,8 @@ PermEditBox::Connect ()
            this, SLOT (TopChanged (bool)));
   connect (actionSave, SIGNAL (triggered()),
            this, SLOT (SaveAction()));
+  connect (actionSaveAs, SIGNAL (triggered()),
+           this, SLOT (SaveAsAction ()));
   connect (actionFont, SIGNAL (triggered()),
            this, SLOT (FontAction ()));
   connect (actionLang, SIGNAL (triggered()),
@@ -170,6 +175,46 @@ void
 PermEditBox::SaveAction ()
 {
   qDebug () << "Save Action called";
+  if (currentFile.length() < 1) {
+    SaveAsAction ();
+  } else {
+    QFile file (currentFile);
+    bool ok = file.open (QFile::WriteOnly);
+    if (ok) {
+      qint64 bytesWritten = file.write (scin->text().toUtf8());
+      ok = (bytesWritten == scin->text().toUtf8().size());
+    }
+    if (!ok) {
+      QMessageBox::warning (this, tr("Write Failed"),
+                              tr("Could not write \n\"%1\"")
+                                .arg (currentFile));
+    }
+  }
+}
+
+void
+PermEditBox::SaveAsAction ()
+{
+  qDebug () << "Save As Action called";
+  QString newFile;
+  newFile = QFileDialog::getSaveFileName (this, tr("Save in File"),
+                                currentFile);
+  if (newFile.length() > 0) {
+    QFile file (newFile);
+    bool ok = file.open (QFile::WriteOnly);
+    if (ok) {
+      qint64 bytesWritten = file.write (scin->text().toUtf8());
+      ok = (bytesWritten == scin->text().toUtf8().size());
+    }
+    if (ok) {
+      currentFile = newFile;
+      emit NewTitle (QFileInfo (currentFile).fileName());
+    } else {
+      QMessageBox::warning (this, tr("Write Failed"),
+                              tr("Could not write \n\"%1\"")
+                                .arg (newFile));
+    }
+  }
 }
 
 void
