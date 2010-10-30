@@ -135,7 +135,7 @@ LexerChooser::InitDefaultNames ()
   newByName ["VHDL"] = LexerChooser::NewLexerVHDL; 
   newByName ["XML"] = LexerChooser::NewLexerXML; 
   newByName ["YAML"] = LexerChooser::NewLexerYAML; 
-#if QSCINTILLA_VERSION >= 0x020404
+#if QSCINTILLA_VERSION >= 0x020402
   newByName ["Spice"] = LexerChooser::NewLexerSpice; 
   newByName ["Verilog"] = LexerChooser::NewLexerVerilog; 
 #endif
@@ -390,7 +390,7 @@ LexerChooser::NewLexerTeX (QWidget * parent)
 }
 
 
-#if QSCINTILLA_VERSION >= 0x020404
+#if QSCINTILLA_VERSION >= 0x020402
 QsciLexer *
 LexerChooser::NewLexerSpice (QWidget * parent)
 {

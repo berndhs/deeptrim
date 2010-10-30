@@ -54,7 +54,7 @@
 #include <Qsci/qscilexervhdl.h>
 #include <Qsci/qscilexerxml.h>
 #include <Qsci/qscilexeryaml.h>
-#if QSCINTILLA_VERSION >= 0x020404
+#if QSCINTILLA_VERSION >= 0x020402
 #include <Qsci/qscilexerverilog.h>
 #include <Qsci/qscilexerspice.h>
 #endif

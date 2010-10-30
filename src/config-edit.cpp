@@ -43,7 +43,7 @@ ConfigEdit::ConfigEdit (QWidget * parent)
   head = new QStandardItem ("Value");
   configModel->setHorizontalHeaderItem (1,head);
 
-  exemptGroups << "sizes" ;
+  exemptGroups << "sizes" << "states" ;
 }
 
 ConfigEdit::~ConfigEdit ()

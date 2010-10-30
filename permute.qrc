@@ -3,6 +3,24 @@
 <qresource>
 <file>deeptrim.png</file>
 </qresource>
+<qresource prefix="/icons">
+<file alias="document-open.png">images/icons/document-open.png</file>
+<file alias="document-save-as.png">images/icons/document-save-as.png</file>
+<file alias="document-save.png">images/icons/document-save.png</file>
+<file alias="document-new.png">images/icons/document-new.png</file>
+<file alias="configure.png">images/icons/configure.png</file>
+<file alias="application-exit.png">images/icons/application-exit.png</file>
+<file alias="edit-copy.png">images/icons/edit-copy.png</file>
+<file alias="edit-cut.png">images/icons/edit-cut.png</file>
+<file alias="edit-delete.png">images/icons/edit-delete.png</file>
+<file alias="edit-paste.png">images/icons/edit-paste.png</file>
+<file alias="edit-redo.png">images/icons/edit-redo.png</file>
+<file alias="edit-select-all.png">images/icons/edit-select-all.png</file>
+<file alias="edit-select.png">images/icons/edit-select.png</file>
+<file alias="edit-undo.png">images/icons/edit-undo.png</file>
+<file alias="insert-text.png">images/icons/insert-text.png</file>
+<file alias="help-about.png">images/icons/help-about.png</file>
+</qresource>
 <qresource prefix="/help">
   <file alias="LICENSE.txt">help/LICENSE.txt</file>
 </qresource>

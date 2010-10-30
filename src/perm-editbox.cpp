@@ -59,6 +59,7 @@ qDebug () << " new box with name " << title;
   setWindowIcon (parent->windowIcon());
   setTitleBarWidget (0);
   SetupMenus ();
+  SetupIcons ();
   gridLayout->addWidget (topMenu,0,0,1,1);
   gridLayout->addItem (buttonLayout, 0,1,1,1);
   scin = scinEdit; //  new QsciScintilla (this);
@@ -99,6 +100,21 @@ PermEditBox::SetupMenus ()
   topMenu->addAction (configMenu->menuAction());
   topMenu->setSizePolicy (QSizePolicy (QSizePolicy::Expanding, 
                                        QSizePolicy::Fixed));
+}
+
+void
+PermEditBox::SetupIcons ()
+{
+  undoButton->setIcon (QIcon (":/icons/edit-undo.png"));
+  redoButton->setIcon (QIcon (":/icons/edit-redo.png"));
+  actionSave->setIconVisibleInMenu (true);
+  actionSave->setIcon (QIcon (":/icons/document-save.png"));
+  actionSaveAs->setIconVisibleInMenu (true);
+  actionSaveAs->setIcon (QIcon (":/icons/document-save-as.png"));
+  actionLoad->setIconVisibleInMenu (true);
+  actionLoad->setIcon (QIcon (":/icons/document-open.png"));
+  actionInsertFile->setIconVisibleInMenu (true);
+  actionInsertFile->setIcon (QIcon (":/icons/insert-text.png"));
 }
 
 void
@@ -309,7 +325,6 @@ PermEditBox::SaveAsAction ()
 void
 PermEditBox::TitleChange (const QString & newTitle)
 {
-qDebug () << objectName() << " change " << windowTitle() << " to " <<newTitle;
   setWindowTitle (newTitle);
   emit NewTitle (newTitle, this);
 }

@@ -81,38 +81,79 @@
    <addaction name="menuHelp"/>
   </widget>
   <action name="actionSettings">
+   <property name="icon">
+    <iconset resource="../permute.qrc">
+     <normaloff>:/icons/configure.png</normaloff>:/icons/configure.png</iconset>
+   </property>
    <property name="text">
     <string>Settings</string>
+   </property>
+   <property name="iconVisibleInMenu">
+    <bool>true</bool>
    </property>
   </action>
   <action name="actionRestart">
    <property name="text">
     <string>Restart</string>
    </property>
+   <property name="iconVisibleInMenu">
+    <bool>true</bool>
+   </property>
   </action>
   <action name="actionQuit">
+   <property name="icon">
+    <iconset resource="../permute.qrc">
+     <normaloff>:/icons/application-exit.png</normaloff>:/icons/application-exit.png</iconset>
+   </property>
    <property name="text">
     <string>Quit</string>
    </property>
+   <property name="iconVisibleInMenu">
+    <bool>true</bool>
+   </property>
   </action>
   <action name="actionNewFile">
+   <property name="icon">
+    <iconset resource="../permute.qrc">
+     <normaloff>:/icons/document-new.png</normaloff>:/icons/document-new.png</iconset>
+   </property>
    <property name="text">
     <string>New File</string>
    </property>
+   <property name="iconVisibleInMenu">
+    <bool>true</bool>
+   </property>
   </action>
   <action name="actionOpenFile">
+   <property name="icon">
+    <iconset resource="../permute.qrc">
+     <normaloff>:/icons/document-open.png</normaloff>:/icons/document-open.png</iconset>
+   </property>
    <property name="text">
     <string>Open File</string>
    </property>
+   <property name="iconVisibleInMenu">
+    <bool>true</bool>
+   </property>
   </action>
   <action name="actionAbout">
+   <property name="icon">
+    <iconset resource="../permute.qrc">
+     <normaloff>:/icons/help-about.png</normaloff>:/icons/help-about.png</iconset>
+   </property>
    <property name="text">
     <string>About</string>
+   </property>
+   <property name="iconVisibleInMenu">
+    <bool>true</bool>
    </property>
   </action>
   <action name="actionLicense">
    <property name="text">
     <string>Lincense</string>
+   </property>
+   <property name="iconVisibleInMenu">
+    <bool>true</bool>
    </property>
   </action>
  </widget>

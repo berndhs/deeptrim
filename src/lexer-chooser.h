@@ -88,7 +88,7 @@ private:
   static QsciLexer * NewLexerVHDL (QWidget *parent);
   static QsciLexer * NewLexerXML (QWidget *parent);
   static QsciLexer * NewLexerYAML (QWidget *parent);
-#if QSCINTILLA_VERSION >= 0x020404
+#if QSCINTILLA_VERSION >= 0x020402
   static QsciLexer * NewLexerSpice (QWidget *parent);
   static QsciLexer * NewLexerVerilog (QWidget *parent);
 #endif

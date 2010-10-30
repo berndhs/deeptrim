@@ -160,6 +160,8 @@ Permute::Run ()
   Settings().setValue ("files/lastfile",saveFile);
   tooltiplen = Settings().value ("styles/tooltiplen",tooltiplen).toInt();
   Settings().setValue ("styles/tooltiplen",tooltiplen);
+  restoreGeometry (Settings().value ("states/maingeometry").toByteArray());
+  restoreState (Settings().value ("states/mainstate").toByteArray());
   show ();
   Settings().sync ();
   NewFile ();
@@ -204,6 +206,8 @@ Permute::CloseCleanup ()
   QSize currentSize = size();
   Settings().setValue ("sizes/main",currentSize);
   Settings().setValue ("files/lastfile",saveFile);
+  Settings().setValue("states/maingeometry", saveGeometry());
+  Settings().setValue("states/mainstate", saveState());
   Settings().sync();
 }
 
