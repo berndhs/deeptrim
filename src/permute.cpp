@@ -44,6 +44,9 @@
 #include <Qsci/qscilexer.h>
 #include <Qsci/qscilexercpp.h>
 #include <QListWidget>
+#include <QObject>
+#include <QObjectList>
+#include <QListWidgetItem>
 
 using namespace deliberate;
 
@@ -52,33 +55,40 @@ namespace permute
 Permute::Permute (QWidget *parent)
   :QMainWindow (parent),
    app (0),
-   textEdit (0),
    configEdit (this),
+   hiddenBox (false),
    again (false),
-   nextPara (1),
-   tooltiplen (40),
-   trashCollect (0)
+   tooltiplen (40)
 {
   ui.setupUi (this);
-  ui.menuStory->setVisible (false);
+  setDockOptions (QMainWindow::AnimatedDocks
+                 | QMainWindow::AllowTabbedDocks
+                 | QMainWindow::ForceTabbedDocks 
+                 );
+  setDockNestingEnabled (false);
+  QDockWidget * hiddenBoxT;
+  hiddenBoxT = new QDockWidget (tr("HiddenTop"), this);
+  hiddenBoxT->setObjectName ("HiddenTop");
+  QMainWindow::addDockWidget (Qt::TopDockWidgetArea, hiddenBoxT);
+  hiddenBoxT->resize (QSize (1,1));
+  hiddenBoxT->hide();
+  hiddenBox = new PermEditBox (tr("HiddenBottom"), this);
+  QMainWindow::addDockWidget (Qt::RightDockWidgetArea, hiddenBox);
   configEdit.setWindowIcon (windowIcon());
-  textEdit = new PermEditBox ("Paragraph",this);
-  textEdit->hide ();
-  SetStoryControlVisible (false);
   Connect ();
-  trashCollect = new QTimer (this);
-  connect (trashCollect, SIGNAL (timeout()), this, SLOT (CleanTrash()));
-  trashCollect->start (2*60*1000);
-}
-
-void
-Permute::SetStoryControlVisible (bool visible)
-{
-  ui.headerList->setVisible (visible);
-  ui.newButton->setVisible (visible);
-  ui.paraNameLabel->setVisible (visible);
-  ui.storeButton->setVisible (visible);
-  ui.textName->setVisible (visible);
+  QPoint belowCentral = centralWidget()->pos();
+  belowCentral.ry() += centralWidget()->size().height();
+  belowCentral.ry() += menuBar()->size().height();
+  int remainingHi = size().height();
+  qDebug () << " init remain hi " << remainingHi;
+  remainingHi -= menuBar()->size().height();
+  remainingHi -= centralWidget()->size().height();
+  qDebug () << " final remain hi " << remainingHi;
+  QSize hiddenSize = hiddenBox->TextEdit().size();
+  hiddenSize.setHeight (250);
+ // hiddenBox->TextEdit().resize (hiddenSize);
+  hiddenBox->resize (hiddenSize);
+  hiddenBox->hide();
 }
 
 void
@@ -86,23 +96,11 @@ Permute::Connect ()
 {
   connect (ui.actionQuit, SIGNAL (triggered()), this, SLOT (Quit()));
   connect (ui.actionRestart, SIGNAL (triggered()), this, SLOT (Restart()));
-  connect (ui.storeButton, SIGNAL (clicked()), this, SLOT (StorePara()));
-  connect (ui.newButton, SIGNAL (clicked()), this, SLOT (NewPara ()));
   connect (ui.actionAbout, SIGNAL (triggered()), this, SLOT (About()));
   connect (ui.actionSettings, SIGNAL (triggered()),
            this, SLOT (EditSettings()));
-
-  connect (ui.actionSave, SIGNAL (triggered()), this, SLOT (Save()));
-  connect (ui.actionOpen, SIGNAL (triggered()), this, SLOT (Load()));
+  connect (ui.actionNewFile, SIGNAL (triggered()), this, SLOT (NewFile()));
   connect (ui.actionOpenFile, SIGNAL (triggered()), this, SLOT (OpenFile()));
-  connect (ui.actionWriteTxt, SIGNAL (triggered()), this, SLOT (SaveText()));
-  connect (ui.actionWriteHtml, SIGNAL (triggered()),
-           this, SLOT (SaveHtml()));
-  connect (ui.actionImportPara, SIGNAL (triggered()),
-           this, SLOT (ImportPara()));
-
-  connect (ui.headerList, SIGNAL (itemClicked (QListWidgetItem*)),
-           this, SLOT (ClickedHeader (QListWidgetItem*)));
 }
 
 void
@@ -112,6 +110,30 @@ Permute::Init (QApplication & pa)
   connect (app, SIGNAL (lastWindowClosed()), this, SLOT (Exiting()));
   Settings().sync();
   initDone = true;
+  qDebug () << " main is " << objectName() << size();
+  //ListChildren (this);
+}
+
+void
+Permute::ListChildren (QObject *parent, int prefixLen)
+{
+  QObjectList kids = parent->children ();
+  QObjectList::iterator it;
+  QString prefix;
+  prefix.fill ('.',prefixLen);
+  for (it = kids.begin(); it!= kids.end(); it++) {
+    QString name = (*it)->objectName();
+    QWidget * widg = dynamic_cast <QWidget*> (*it);
+    if (widg) {
+      qDebug () << " child widget " << QString ("%1%2")
+                                       .arg (prefix).arg(name)
+                << widg->size();
+    } else {
+      qDebug () << " child object " << QString ("%1%2")
+                                     .arg(prefix).arg (name);
+    }
+    ListChildren (*it, prefixLen+1);
+  }
 }
 
 void
@@ -206,195 +228,6 @@ Permute::EditSettings ()
   configEdit.Exec ();
 }
 
-void
-Permute::StorePara ()
-{
-  QString pname = ui.textName->text();
-  QString body = textEdit->Text ();
-  if (pname.length() == 0) {
-    pname = tr ("Paragraph %1").arg (nextPara);
-    ui.textName->setText (pname);
-  }
-  if (!paragraphs.contains(pname)) {
-    QListWidgetItem *newItem = new QListWidgetItem (pname);
-    newItem->setToolTip (body.left (tooltiplen));
-    ui.headerList->addItem (newItem);
-  }
-  paragraphs [pname] = body;
-}
-
-void
-Permute::NewPara ()
-{
-  if (textEdit->Text().trimmed ().length() > 0) {
-    StorePara();
-  }
-  textEdit->Clear ();
-  QString pname = tr("Paragraph %1").arg (nextPara);
-  ui.textName->setText (pname);
-  nextPara++;
-}
-
-void
-Permute::ClickedHeader (QListWidgetItem *item)
-{
-  CellMenu (item);
-}
-
-void
-Permute::OpenItemPara (const QListWidgetItem *item)
-{
-  QString oldbody = textEdit->Text().trimmed();
-  if (oldbody.length() > 0) {
-    StorePara ();
-  }
-  if (item) {
-    QString head = item->text ();
-    if (paragraphs.contains (head)) {
-      QString body = paragraphs [head];
-      textEdit->SetText (body);
-      ui.textName->setText (head);
-    }
-  }
-}
-
-QAction *
-Permute::CellMenu (const QListWidgetItem *cell,
-                   const QList<QAction *> extraActions)
-{
-  if (cell == 0) {
-    return 0;
-  }
-  QMenu menu (this);
-  QAction * openAction = new QAction (tr("Open Paragraph"),this);
-  QAction * copyAction = new QAction (tr("Copy Paragraph"),this);
-  QAction * deleteAction = new QAction (tr("Delete Paragraph"),this);
-  menu.addAction (openAction);
-  menu.addAction (copyAction);
-  menu.addSeparator ();
-  menu.addAction (deleteAction);
-  if (extraActions.size() > 0) {
-    menu.addSeparator ();
-  }
-  for (int a=0; a < extraActions.size(); a++) {
-    menu.addAction (extraActions.at (a));
-  }
-  
-  QAction * select = menu.exec (QCursor::pos());
-  if (select == openAction) {
-    OpenItemPara (cell);
-    return 0;
-  } else if (select == copyAction) {
-    QClipboard * clip = QApplication::clipboard ();
-    if (clip) {
-      clip->setText (paragraphs [cell->text()]);
-    }
-    return 0;
-  } else if (select == deleteAction) {
-    paragraphs.remove (cell->text()); 
-    int row = ui.headerList->row (cell);
-    QListWidgetItem * gone = ui.headerList->takeItem (row);
-    deadItems.append (gone);
-    return 0;
-  } else {
-    return select;
-  }
-}
-
-void
-Permute::Save ()
-{
-  QString newFile;
-  newFile = QFileDialog::getSaveFileName (this, tr("Save in File"),
-                                saveFile,
-                                tr ("XML file (*.xml);; Any file (*)"));
-  if (newFile.length() > 0) {
-    QFile file (newFile);
-    file.open (QFile::WriteOnly);
-    WriteDom (&file);
-    file.close ();
-    saveFile = newFile;
-  }
-}
-
-void
-Permute::SaveText ()
-{
-  QString newFile;
-  QFileInfo  info (newFile);
-  
-  newFile = QFileDialog::getSaveFileName (this, tr("Write to File"),
-                                info.path(),
-                                tr ("Text file (*.txt);; Any file (*)"));
-  if (newFile.length() > 0) {
-    QFile file (newFile);
-    file.open (QFile::WriteOnly);
-    WriteText (&file);
-    file.close ();
-    saveFile = newFile;
-  }
-}
-
-void
-Permute::SaveHtml ()
-{
-  QString newFile;
-  QFileInfo  info (newFile);
-  
-  newFile = QFileDialog::getSaveFileName (this, tr("Write to File"),
-                                info.path(),
-                                tr ("Html file (*.html);; Any file (*)"));
-  if (newFile.length() > 0) {
-    QString tmpname (newFile);
-    tmpname.append (".txt");
-    QFile tmpfile (tmpname);
-    tmpfile.open (QFile::WriteOnly);
-    WriteText (&tmpfile);
-    tmpfile.close ();
-    QProcess *convert = new QProcess (this);
-    QString convertProg ("asciidoc");
-    QStringList convArgs;
-    convArgs << "-o" << newFile << tmpname;
-    qDebug () << " calling process " << convertProg << " with " << convArgs;
-    convert->start (convertProg, convArgs);
-  }
-}
-
-void
-Permute::ImportPara ()
-{
-  QString newFile;
-  QFileInfo  info (newFile);
-  
-  newFile = QFileDialog::getOpenFileName (this, tr("Read from File"),
-                                info.filePath());
-  if (newFile.length() > 0) {
-    QFile file (newFile);
-    file.open (QFile::ReadOnly);
-    QByteArray body = file.readAll();
-    if (body.size() > 0) {
-      NewPara ();
-      textEdit->SetText (body);
-    }
-  }
-}
-
-
-void
-Permute::Load ()
-{
-  QString oldFile;
-  oldFile = QFileDialog::getOpenFileName (this, tr("Load Document from"),
-                             saveFile,
-                             tr ("XML files (*.xml);; Any file (*)"));
-  if (oldFile.length() > 0) {
-    QFile file (oldFile);
-    file.open (QFile::ReadOnly);
-    ReadDom (&file);
-    file.close ();
-    saveFile = oldFile;
-  }
-}
 
 void
 Permute::OpenFile ()
@@ -413,7 +246,12 @@ Permute::OpenFile ()
                            | QDockWidget::DockWidgetMovable
                            | QDockWidget::DockWidgetFloatable
                            );
-      addDockWidget (Qt::LeftDockWidgetArea, newEdit);
+      AddDockWidget (Qt::RightDockWidgetArea, newEdit);
+      NewTag (newEdit->Title(), newEdit);
+      connect (newEdit, SIGNAL (NewTitle (QString, PermEditBox *)),
+               this, SLOT (NewTag (QString, PermEditBox *)));
+      connect (newEdit, SIGNAL (TitleGone (PermEditBox *)),
+               this, SLOT (RemoveTag (PermEditBox *)));
     } else {
       delete newEdit;
     }
@@ -421,83 +259,38 @@ Permute::OpenFile ()
 }
 
 void
-Permute::WriteDom (QIODevice * dest)
+Permute::AddDockWidget ( Qt::DockWidgetArea area, 
+                        QDockWidget * dockwidget )
 {
-  QDomDocument doc ("Story");
-  QDomElement main = doc.createElement ("Main");
-  doc.appendChild (main);
-  int nr = ui.headerList->count();
-  for (int r=0; r<nr; r++) {
-    QString head = ui.headerList->item(r)->text();
-    QString body;
-    if (paragraphs.contains (head)) {
-      body = paragraphs [head];
-    }
-    QDomElement section = doc.createElement ("section");
-    section.setAttribute ("title", head);
-    QDomText text = doc.createTextNode (body);
-    section.appendChild (text);
-    main.appendChild (section);
-  }
-  dest->write (doc.toString().toUtf8());
+qDebug () << " add dock widget " << dockwidget << " in area " << area;
+  QMainWindow::addDockWidget (area, dockwidget);
+  tabifyDockWidget (hiddenBox, dockwidget);
+  dockwidget->setFocus ();
+  ListChildren (dockwidget);
 }
 
 void
-Permute::ReadDom (QIODevice * source)
+Permute::AddDockWidget ( Qt::DockWidgetArea area, 
+                        QDockWidget * dockwidget, 
+                        Qt::Orientation orientation )
 {
-  QDomDocument  doc;
-  doc.setContent (source);
-  ui.headerList->clear ();
-  textEdit->Clear ();
-  ui.textName->clear ();
-  paragraphs.clear ();
-  QDomElement main = doc.documentElement ();
-  QDomElement section = main.firstChildElement ();
-  while (!section.isNull()) {
-     QString head = section.attribute ("title");
-     QString body = section.text ();
-     paragraphs [head] = body;
-     QListWidgetItem *newItem = new QListWidgetItem (head);
-     newItem->setToolTip (body.left (tooltiplen));
-     ui.headerList->addItem (newItem);
-     section = section.nextSiblingElement();
-  }
+qDebug () << " add dock widget " << dockwidget << " in area " << area 
+          << " oriented " << orientation;
+  QMainWindow::addDockWidget (area, dockwidget, orientation);
+  tabifyDockWidget (hiddenBox, dockwidget);
+  dockwidget->setFocus ();
 }
 
 void
-Permute::WriteText (QIODevice * dest)
+Permute::NewFile ()
 {
-  QByteArray eol ("\n");
-  dest->write (tr ("The Story").toUtf8());
-  dest->write (eol);
-  dest->write (QByteArray ("========="));
-  dest->write (eol);
-  dest->write (eol);
-  int nr = ui.headerList->count();
-  for (int r=0; r<nr; r++) {
-    QString head = ui.headerList->item(r)->text();
-    QString body;
-    if (paragraphs.contains (head)) {
-      body = paragraphs [head];
-    }
-    dest->write (QString("== %1 ==").arg (head).toUtf8());
-    dest->write (eol);
-    dest->write (eol);
-    dest->write (body.toUtf8());
-    dest->write (eol);
-    dest->write (eol);
-    dest->write (eol);
-  }
-}
-
-void
-Permute::CleanTrash ()
-{
-  QList<QListWidgetItem*>::iterator  dit;
-  for (dit = deadItems.begin(); dit != deadItems.end(); dit++) {
-    delete *dit;
-  }
-  deadItems.clear ();
+  PermEditBox * newEdit = new PermEditBox (tr("New-File"), this);
+  NewTag (newEdit->Title(), newEdit);
+  connect (newEdit, SIGNAL (NewTitle (QString, PermEditBox *)),
+               this, SLOT (NewTag (QString, PermEditBox *)));
+  connect (newEdit, SIGNAL (TitleGone (PermEditBox *)),
+               this, SLOT (RemoveTag (PermEditBox *)));
+  AddDockWidget (Qt::RightDockWidgetArea, newEdit);
 }
 
 void
@@ -511,6 +304,37 @@ Permute::License ()
 {
   if (helpView) {
     helpView->Show ("qrc:/help/LICENSE.txt");
+  }
+}
+
+void
+Permute::NewTag (QString tag, PermEditBox * box)
+{
+  qDebug () << " new tag " << tag;
+  QListWidgetItem *item (0);
+  if (titleItems.contains (box)) {
+    item = titleItems [box];
+  } else {
+    item = new QListWidgetItem (ui.titleList);
+    item->setText (tag);
+    titleItems [box] = item;
+    titleBoxes [item] = box;
+    ui.titleList->addItem (item);
+  }
+  item->setText (tag);
+}
+
+void
+Permute::RemoveTag (PermEditBox *box)
+{
+  qDebug () << " remove tag " << box->Title();
+  if (titleItems.contains (box)) {
+    QListWidgetItem * item = titleItems [box];
+    int row = ui.titleList->row (item);
+    ui.titleList->takeItem (row);
+    titleItems.remove (box);
+    titleBoxes.remove (item);
+    delete item;
   }
 }
 

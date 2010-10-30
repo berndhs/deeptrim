@@ -39,20 +39,34 @@
 namespace permute
 {
 
+int PermEditBox::boxCounter (1);
+
 PermEditBox::PermEditBox (const QString & title, 
                QWidget * parent, 
                Qt::WindowFlags flags)
   :QDockWidget (title, parent, flags),
    scin (0)
 {
+qDebug () << " new box with name " << title;
+  QString oldName = objectName();
+  setObjectName (QString ("PermEditBox-%1")
+                         .arg(boxCounter));
   setupUi (this);
+  gridLayout->removeItem (buttonLayout);
+  gridLayout->removeWidget (scinEdit);
+  setWindowTitle (title);
   setWindowIcon (parent->windowIcon());
   setTitleBarWidget (0);
   topMenu = new QMenuBar (dockWidgetContents);
   fileMenu = new QMenu (tr("File..."), topMenu);
   configMenu = new QMenu (tr("Config"), topMenu);
-  actionSave = new QAction (tr("Save"),this);
+  actionSave = new QAction (tr("&Save"),this);
+  actionSave->setShortcut (QKeySequence::Save);
   actionSaveAs = new QAction (tr("Save As..."),this);
+  actionSaveAs->setShortcut (QKeySequence::SaveAs);
+  actionLoad = new QAction (tr("Load File"),this);
+  actionLoad->setShortcut (QKeySequence::Open);
+  actionInsertFile = new QAction (tr("Insert File"), this);
   actionFont = new QAction (tr("Font"),this);
   actionLang = new QAction (tr("File Type"),this);
   iconAction = new QAction (parent->windowIcon(), tr(""),this);
@@ -61,22 +75,28 @@ PermEditBox::PermEditBox (const QString & title,
                           .arg(QApplication::applicationName()));
   fileMenu->addAction (actionSave);
   fileMenu->addAction (actionSaveAs);
+  fileMenu->addAction (actionLoad);
+  fileMenu->addAction (actionInsertFile);
   configMenu->addAction (actionFont);
   configMenu->addAction (actionLang);
   topMenu->addAction (iconAction);
   topMenu->addAction (fileMenu->menuAction());
   topMenu->addAction (configMenu->menuAction());
+  topMenu->setSizePolicy (QSizePolicy (QSizePolicy::Expanding, 
+                                       QSizePolicy::Fixed));
   gridLayout->addWidget (topMenu,0,0,1,1);
-  scin = new QsciScintilla (this);
-  gridLayout->addWidget (scin, 1,0,1,1);
+  gridLayout->addItem (buttonLayout, 0,1,1,1);
+  scin = scinEdit; //  new QsciScintilla (this);
+  scin->setObjectName (QString ("Scin-%1").arg (boxCounter));
+  gridLayout->addWidget (scin, 1,0,2,2);
   Connect ();
+  emit NewPermEditBox (objectName());
+  boxCounter++;
 }
 
 void
 PermEditBox::Connect ()
 {
-  connect (this, SIGNAL (NewTitle (QString)), 
-          this, SLOT (SetTitle (QString)));
   connect (this, SIGNAL (dockLocationChanged (Qt::DockWidgetArea)),
            this, SLOT (DockMoved (Qt::DockWidgetArea)));
   connect (this, SIGNAL (topLevelChanged (bool)),
@@ -85,12 +105,20 @@ PermEditBox::Connect ()
            this, SLOT (SaveAction()));
   connect (actionSaveAs, SIGNAL (triggered()),
            this, SLOT (SaveAsAction ()));
+  connect (actionLoad, SIGNAL (triggered()),
+           this, SLOT (LoadAction ()));
+  connect (actionInsertFile, SIGNAL (triggered()),
+           this, SLOT (LoadInsertAction ()));
   connect (actionFont, SIGNAL (triggered()),
            this, SLOT (FontAction ()));
   connect (actionLang, SIGNAL (triggered()),
            this, SLOT (LangAction ()));
   connect (iconAction, SIGNAL (triggered()),
            this, SLOT (IconAction ()));
+  connect (scin, SIGNAL (cursorPositionChanged (int, int)),
+           this, SLOT (CursorChange (int, int)));
+  connect (undoButton, SIGNAL (clicked()), scin, SLOT (undo()));
+  connect (redoButton, SIGNAL (clicked()), scin, SLOT (redo()));
 }
 
 void
@@ -104,7 +132,11 @@ PermEditBox::SetDefaultFont (const QFont & font, bool setNow)
 {
   defaultFont = font;
   if (setNow) {
-    scin->setFont (defaultFont);
+    if (scin->lexer()) {
+      scin->lexer()->setFont (defaultFont);
+    } else {
+      scin->setFont (defaultFont);
+    }
   }
 }
 
@@ -114,7 +146,6 @@ PermEditBox::DockMoved (Qt::DockWidgetArea area)
   qDebug () << "Dock Moved to " << area;
   if (isWindow()) {
     setWindowIcon (parentWidget()->windowIcon());
-qDebug () << windowIcon();
   }
 }
 
@@ -157,8 +188,10 @@ PermEditBox::LangAction ()
                             | QMessageBox::No 
                             | QMessageBox::Cancel);
   if (ans & QMessageBox::Yes) {
-    QsciLexer * newLex = LexerChooser::Ref().NewLexerDialog (this, scin, lang);
-    if (newLex) {
+    bool pickedOne (false);
+    QsciLexer * newLex = LexerChooser::Ref().NewLexerDialog (this, 
+                                                    scin, pickedOne, lang);
+    if (pickedOne) {
       scin->setLexer (newLex);
     }
   }
@@ -170,6 +203,41 @@ PermEditBox::IconAction ()
   qDebug () << " IconAction ";
   setFloating (false);
 }
+
+void
+PermEditBox::LoadAction ()
+{
+  if (scin->isModified()) {
+    AskSave ();
+  }
+  QString oldFile;
+  QFileInfo info (currentFile);
+  oldFile = QFileDialog::getOpenFileName (this, tr("Read File"),
+                             info.path());
+  if (oldFile.length() > 0) {
+    LoadFile (oldFile);
+  }
+}
+
+void
+PermEditBox::LoadInsertAction ()
+{
+  QString oldFile;
+  QFileInfo info (currentFile);
+  oldFile = QFileDialog::getOpenFileName (this, tr("Read File"),
+                             info.path());
+  if (oldFile.length() > 0) {
+    QFile file (oldFile);
+    bool ok = file.open (QFile::ReadOnly);
+    if (ok) {
+      QByteArray bytes = file.readAll ();
+      int row, col;
+      scin->getCursorPosition (&row, &col);
+      scin->insertAt (QString::fromUtf8(bytes.data()), row, col);
+    }
+  }
+}
+
 
 void
 PermEditBox::SaveAction ()
@@ -184,7 +252,9 @@ PermEditBox::SaveAction ()
       qint64 bytesWritten = file.write (scin->text().toUtf8());
       ok = (bytesWritten == scin->text().toUtf8().size());
     }
-    if (!ok) {
+    if (ok) {
+      scin->setModified (false);
+    } else {
       QMessageBox::warning (this, tr("Write Failed"),
                               tr("Could not write \n\"%1\"")
                                 .arg (currentFile));
@@ -208,7 +278,8 @@ PermEditBox::SaveAsAction ()
     }
     if (ok) {
       currentFile = newFile;
-      emit NewTitle (QFileInfo (currentFile).fileName());
+      TitleChange (QFileInfo (currentFile).fileName());
+      scin->setModified (false);
     } else {
       QMessageBox::warning (this, tr("Write Failed"),
                               tr("Could not write \n\"%1\"")
@@ -218,9 +289,37 @@ PermEditBox::SaveAsAction ()
 }
 
 void
+PermEditBox::TitleChange (const QString & newTitle)
+{
+qDebug () << objectName() << " change " << windowTitle() << " to " <<newTitle;
+  setWindowTitle (newTitle);
+  emit NewTitle (newTitle, this);
+}
+
+void
+PermEditBox::AskSave ()
+{
+  QString msg (tr("File\n\"%1\"\nhas been modified\nSave ?").arg(currentFile));
+  int reply = QMessageBox::question (this,
+                              tr ("File Modified !"),
+                             msg,
+                              QMessageBox::Yes 
+                            | QMessageBox::No );
+  if (reply & QMessageBox::Yes) {
+    SaveAction ();
+  }
+}
+
+void
 PermEditBox::SetTitle (QString newTitle)
 {
   setWindowTitle (newTitle);
+}
+
+QString
+PermEditBox::Title ()
+{
+  return windowTitle();
 }
 
 QsciScintilla &
@@ -230,9 +329,21 @@ PermEditBox::TextEdit ()
 }
 
 void
-PermEditBox::resizeEvent (QResizeEvent *event)
+PermEditBox::CursorChange (int line, int col)
 {
-  QDockWidget::resizeEvent (event);
+  linePosLabel->setText (tr("Line %1 Col %2").arg(line).arg(col));
+}
+
+void
+PermEditBox::closeEvent (QCloseEvent *event)
+{
+  qDebug () << " PermEditBox closed " << event->spontaneous ();
+  qDebug () << "      obj name " << objectName();
+  if (scin->isModified()) {
+    AskSave ();
+  }
+  emit TitleGone (this);
+  QDockWidget::closeEvent (event);
 }
 
 QString
@@ -279,7 +390,7 @@ PermEditBox::LoadFile (const QString & filename)
     }
     scin->setLexer (lex);
     currentFile = file.fileName();
-    emit NewTitle (QFileInfo (currentFile).fileName());
+    TitleChange (QFileInfo (currentFile).fileName());
     return true;
   }
   return ok;

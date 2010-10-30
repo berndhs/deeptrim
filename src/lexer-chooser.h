@@ -40,6 +40,7 @@ public:
   QsciLexer * NewLexerBySuffix (QWidget *lexParent, const QString & kind);
   QsciLexer * NewLexerDialog (QWidget *dialogParent,
                               QWidget *lexParent, 
+                               bool & chosen,
                               const QString & kind = QString ());
 
 static LexerChooser & Ref ();
@@ -57,6 +58,7 @@ private:
   NewFuncMapType    newByName;
   NewFuncMapType    newBySuffix;
   
+  static QsciLexer * NewLexerNone (QWidget *parent);
   static QsciLexer * NewLexerBash (QWidget *parent);
   static QsciLexer * NewLexerBatch (QWidget *parent);
   static QsciLexer * NewLexerCMake (QWidget *parent);

@@ -70,6 +70,8 @@ public slots:
 
   void Quit ();
   void About ();
+  void NewTag (QString tag, PermEditBox *box);
+  void RemoveTag (PermEditBox *box);
 
 
 private slots:
@@ -77,50 +79,38 @@ private slots:
   void License ();
   void Exiting ();
   void Restart ();
-  void StorePara ();
-  void NewPara ();
   void EditSettings ();
-  void ClickedHeader (QListWidgetItem* item);
-  void OpenItemPara (const QListWidgetItem* item);
-  void Save ();
-  void SaveText ();
-  void SaveHtml ();
-  void Load ();
-  void ImportPara ();
   void OpenFile ();
-  void CleanTrash ();
+  void NewFile ();
 
 private:
 
   void  Connect ();
-  void  SetStoryControlVisible (bool visible);
   void  CloseCleanup ();
-  void  WriteDom (QIODevice * dest);
-  void  WriteText (QIODevice * dest);
-  void  ReadDom (QIODevice * source);
-  QAction*  CellMenu (const QListWidgetItem *cell,
-                  const QList <QAction *> extraActions = QList<QAction*>());
+  void  AddDockWidget ( Qt::DockWidgetArea area, 
+                        QDockWidget * dockwidget );
+  void  AddDockWidget ( Qt::DockWidgetArea area, 
+                        QDockWidget * dockwidget, 
+                        Qt::Orientation orientation );
+  void  ListChildren (QObject * parent, int prefixLen = 1);
 
   bool           initDone;
   QApplication  *app;
 
   Ui_PermuteWin  ui;
-  PermEditBox   *textEdit;
   ConfigEdit     configEdit;
-
-  QStringList      configMessages;
-  HelpView        *helpView;
+  PermEditBox   *hiddenBox;
+  QStringList    configMessages;
+  HelpView      *helpView;
 
   QStringList    args;
   bool           again;
-  int            nextPara;
   int            tooltiplen;
   QString        saveFile;
 
-  QMap <QString, QString>  paragraphs;
+  QMap <PermEditBox *, QListWidgetItem *>  titleItems;
+  QMap <QListWidgetItem *, PermEditBox *>  titleBoxes;
 
-  QList <QListWidgetItem *>  deadItems;
-  QTimer                    *trashCollect;
 };
 
 } // namespace

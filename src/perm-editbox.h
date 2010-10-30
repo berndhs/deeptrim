@@ -53,6 +53,8 @@ public:
   bool LoadFile (const QString & filename);
   QString FileName ();
 
+  QString Title ();
+
 public slots:
 
   void SetTitle (QString newTitle);
@@ -64,24 +66,31 @@ private slots:
   void FontAction ();
   void LangAction ();
   void IconAction ();
+  void LoadAction ();
+  void LoadInsertAction ();
   void SaveAction ();
   void SaveAsAction ();
+  void AskSave ();
+  void CursorChange (int line, int col);
 
 signals:
 
-  void NewTitle (QString newTitle);
+  void NewTitle (QString newTitle, PermEditBox * box);
+  void TitleGone (PermEditBox * box);
+  void NewPermEditBox (QString newName);
 
 protected:
 
-  void resizeEvent (QResizeEvent *event);
+  void closeEvent  (QCloseEvent *event);
 
 private:
 
   void Connect ();
+  void TitleChange (const QString & newTitle);
 
+  QsciScintilla *scin;
   QString        currentFile;
   QFont          defaultFont;
-  QsciScintilla *scin;
   QMenuBar      *topMenu;
   QMenu         *fileMenu;
   QMenu         *configMenu;
@@ -90,6 +99,10 @@ private:
   QAction       *actionSaveAs;
   QAction       *actionFont;
   QAction       *actionLang;
+  QAction       *actionLoad;
+  QAction       *actionInsertFile;
+
+  static int boxCounter;
 };
 
 } // namespace

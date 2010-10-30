@@ -72,6 +72,7 @@ LexerChooser::NewLexerBySuffix (QWidget *lexParent, const QString & kind)
 QsciLexer *
 LexerChooser::NewLexerDialog (QWidget *dialogParent,
                               QWidget *lexParent, 
+                              bool & chosen,
                               const QString &kind )
 {
   QStringList languages;
@@ -87,9 +88,11 @@ LexerChooser::NewLexerDialog (QWidget *dialogParent,
     nit = newByName.find (lang);
     if (nit != newByName.end()) {
       QsciLexer * newLex = nit->second (lexParent);
+      chosen = true;
       return newLex;
     }
   }
+  chosen = false;
   return 0;
 }
 
@@ -102,10 +105,11 @@ LexerChooser::LexerChooser ()
 void
 LexerChooser::InitDefaultNames ()
 {
+  newByName [QObject::tr(" - none - ")] = LexerChooser::NewLexerNone;
   newByName ["Bash"] = LexerChooser::NewLexerBash; 
   newByName ["Batch"] = LexerChooser::NewLexerBatch; 
   newByName ["CMake"] = LexerChooser::NewLexerCMake; 
-  newByName ["CPP"] = LexerChooser::NewLexerCPP; 
+  newByName ["C++"] = LexerChooser::NewLexerCPP; 
   newByName ["C#"] = LexerChooser::NewLexerCSharp; 
   newByName ["CSS"] = LexerChooser::NewLexerCSS; 
   newByName ["D"] = LexerChooser::NewLexerD; 
@@ -173,6 +177,12 @@ LexerChooser::InitDefaultSuffixes ()
   newBySuffix ["qrc"] = LexerChooser::NewLexerXML;
 }
 
+QsciLexer *
+LexerChooser::NewLexerNone (QWidget * parent)
+{
+  Q_UNUSED (parent)
+  return 0;
+}
 
 QsciLexer *
 LexerChooser::NewLexerBash (QWidget * parent)

@@ -24,6 +24,7 @@
 
 
 #include <QApplication>
+#include <Qsci/qsciglobal.h>
 #include "deliberate.h"
 #include "version.h"
 #include "cmdoptions.h"
@@ -62,10 +63,12 @@ main (int argc, char *argv[])
     exit (0);
   }
   pv.CLIVersion ();
-  configMessages.append (QString("Built on %1 %2")
-                         .arg (__DATE__).arg(__TIME__));
   configMessages.append (QObject::tr("Build with Qt %1").arg(QT_VERSION_STR));
   configMessages.append (QObject::tr("Running with Qt %1").arg(qVersion()));
+  configMessages.append (QObject::tr("Using QScintilla %1")
+                            .arg(QSCINTILLA_VERSION_STR));
+  configMessages.append (QString("Built on %1 %2")
+                         .arg (__DATE__).arg(__TIME__));
   for (int cm=0; cm<configMessages.size(); cm++) {
     deliberate::StdOut () << configMessages[cm] << endl;
   }

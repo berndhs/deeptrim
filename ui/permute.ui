@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>581</width>
-    <height>358</height>
+    <width>800</width>
+    <height>600</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,53 +18,34 @@
     <normaloff>:/deeptrim.png</normaloff>:/deeptrim.png</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>0</width>
+     <height>40</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>16777215</width>
+     <height>16777215</height>
+    </size>
+   </property>
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
-     <widget class="QListWidget" name="headerList">
+     <widget class="QListWidget" name="titleList">
       <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-        <horstretch>35</horstretch>
+       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+        <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
-      <property name="editTriggers">
-       <set>QAbstractItemView::NoEditTriggers</set>
-      </property>
-      <property name="dragEnabled">
-       <bool>true</bool>
-      </property>
-      <property name="dragDropMode">
-       <enum>QAbstractItemView::InternalMove</enum>
-      </property>
      </widget>
-    </item>
-    <item row="1" column="0">
-     <layout class="QHBoxLayout" name="storyButtons">
-      <item>
-       <widget class="QPushButton" name="newButton">
-        <property name="text">
-         <string>New</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="paraNameLabel">
-        <property name="text">
-         <string>Name:</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLineEdit" name="textName"/>
-      </item>
-      <item>
-       <widget class="QPushButton" name="storeButton">
-        <property name="text">
-         <string>Store</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
     </item>
    </layout>
   </widget>
@@ -73,54 +54,35 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>581</width>
+     <width>800</width>
      <height>25</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menuPermute">
+   <widget class="QMenu" name="menuFile">
     <property name="title">
-     <string>Permute</string>
+     <string>File...</string>
     </property>
+    <addaction name="actionNewFile"/>
+    <addaction name="actionOpenFile"/>
+    <addaction name="separator"/>
     <addaction name="actionSettings"/>
+    <addaction name="separator"/>
     <addaction name="actionRestart"/>
     <addaction name="actionQuit"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
-     <string>Help...</string>
+     <string>Help</string>
     </property>
     <addaction name="actionAbout"/>
     <addaction name="actionLicense"/>
    </widget>
-   <widget class="QMenu" name="menuFile">
-    <property name="title">
-     <string>File</string>
-    </property>
-    <addaction name="actionSave"/>
-    <addaction name="actionOpenFile"/>
-   </widget>
-   <widget class="QMenu" name="menuStory">
-    <property name="title">
-     <string>Story</string>
-    </property>
-    <addaction name="actionOpen"/>
-    <addaction name="actionImportPara"/>
-    <addaction name="actionWriteTxt"/>
-    <addaction name="actionWriteHtml"/>
-   </widget>
-   <addaction name="menuPermute"/>
    <addaction name="menuFile"/>
-   <addaction name="menuStory"/>
    <addaction name="menuHelp"/>
   </widget>
-  <action name="actionQuit">
+  <action name="actionSettings">
    <property name="text">
-    <string>Quit</string>
-   </property>
-  </action>
-  <action name="actionAbout">
-   <property name="text">
-    <string>About</string>
+    <string>Settings</string>
    </property>
   </action>
   <action name="actionRestart">
@@ -128,44 +90,14 @@
     <string>Restart</string>
    </property>
   </action>
-  <action name="actionSettings">
+  <action name="actionQuit">
    <property name="text">
-    <string>Settings</string>
+    <string>Quit</string>
    </property>
   </action>
-  <action name="actionOpen">
+  <action name="actionNewFile">
    <property name="text">
-    <string>Open Story</string>
-   </property>
-  </action>
-  <action name="actionSave">
-   <property name="text">
-    <string>Save</string>
-   </property>
-  </action>
-  <action name="actionSaveAs">
-   <property name="text">
-    <string>Save As...</string>
-   </property>
-  </action>
-  <action name="actionWriteTxt">
-   <property name="text">
-    <string>Export txt</string>
-   </property>
-  </action>
-  <action name="actionImportPara">
-   <property name="text">
-    <string>Import Paragraph</string>
-   </property>
-  </action>
-  <action name="actionWriteHtml">
-   <property name="text">
-    <string>Asciidoc </string>
-   </property>
-  </action>
-  <action name="actionLicense">
-   <property name="text">
-    <string>License</string>
+    <string>New File</string>
    </property>
   </action>
   <action name="actionOpenFile">
@@ -173,8 +105,17 @@
     <string>Open File</string>
    </property>
   </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About</string>
+   </property>
+  </action>
+  <action name="actionLicense">
+   <property name="text">
+    <string>Lincense</string>
+   </property>
+  </action>
  </widget>
- <layoutdefault spacing="1" margin="1"/>
  <resources>
   <include location="../permute.qrc"/>
  </resources>

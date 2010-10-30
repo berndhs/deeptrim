@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>408</width>
+    <height>445</height>
    </rect>
   </property>
   <property name="windowIcon">
@@ -24,10 +24,65 @@
    <string>File Edit</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
-   <layout class="QGridLayout" name="gridLayout"/>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <layout class="QHBoxLayout" name="buttonLayout">
+      <item>
+       <widget class="QPushButton" name="undoButton">
+        <property name="text">
+         <string>Undo</string>
+        </property>
+        <property name="shortcut">
+         <string>Ctrl+Z</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="redoButton">
+        <property name="text">
+         <string>Redo</string>
+        </property>
+        <property name="shortcut">
+         <string>Ctrl+Shift+Z</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="linePosLabel">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Line</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item row="1" column="0">
+     <widget class="QsciScintilla" name="scinEdit">
+      <property name="toolTip">
+       <string/>
+      </property>
+      <property name="whatsThis">
+       <string/>
+      </property>
+     </widget>
+    </item>
+   </layout>
   </widget>
  </widget>
  <layoutdefault spacing="1" margin="1"/>
+ <customwidgets>
+  <customwidget>
+   <class>QsciScintilla</class>
+   <extends>QFrame</extends>
+   <header>Qsci/qsciscintilla.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="../permute.qrc"/>
  </resources>
