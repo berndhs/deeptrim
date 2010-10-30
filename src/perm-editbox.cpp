@@ -34,6 +34,7 @@
 #include <QIcon>
 #include <QMessageBox>
 #include <QFileDialog>
+#include <QFontDialog>
 #include "lexer-chooser.h"
 
 namespace permute
@@ -57,6 +58,20 @@ qDebug () << " new box with name " << title;
   setWindowTitle (title);
   setWindowIcon (parent->windowIcon());
   setTitleBarWidget (0);
+  SetupMenus ();
+  gridLayout->addWidget (topMenu,0,0,1,1);
+  gridLayout->addItem (buttonLayout, 0,1,1,1);
+  scin = scinEdit; //  new QsciScintilla (this);
+  scin->setObjectName (QString ("Scin-%1").arg (boxCounter));
+  gridLayout->addWidget (scin, 1,0,2,2);
+  Connect ();
+  emit NewPermEditBox (objectName());
+  boxCounter++;
+}
+
+void
+PermEditBox::SetupMenus ()
+{
   topMenu = new QMenuBar (dockWidgetContents);
   fileMenu = new QMenu (tr("File..."), topMenu);
   configMenu = new QMenu (tr("Config"), topMenu);
@@ -64,12 +79,12 @@ qDebug () << " new box with name " << title;
   actionSave->setShortcut (QKeySequence::Save);
   actionSaveAs = new QAction (tr("Save As..."),this);
   actionSaveAs->setShortcut (QKeySequence::SaveAs);
-  actionLoad = new QAction (tr("Load File"),this);
+  actionLoad = new QAction (tr("Open File"),this);
   actionLoad->setShortcut (QKeySequence::Open);
   actionInsertFile = new QAction (tr("Insert File"), this);
   actionFont = new QAction (tr("Font"),this);
   actionLang = new QAction (tr("File Type"),this);
-  iconAction = new QAction (parent->windowIcon(), tr(""),this);
+  iconAction = new QAction (parentWidget()->windowIcon(), tr(""),this);
   iconAction->setVisible (false);
   iconAction->setToolTip (tr("%1 Editor")
                           .arg(QApplication::applicationName()));
@@ -84,14 +99,6 @@ qDebug () << " new box with name " << title;
   topMenu->addAction (configMenu->menuAction());
   topMenu->setSizePolicy (QSizePolicy (QSizePolicy::Expanding, 
                                        QSizePolicy::Fixed));
-  gridLayout->addWidget (topMenu,0,0,1,1);
-  gridLayout->addItem (buttonLayout, 0,1,1,1);
-  scin = scinEdit; //  new QsciScintilla (this);
-  scin->setObjectName (QString ("Scin-%1").arg (boxCounter));
-  gridLayout->addWidget (scin, 1,0,2,2);
-  Connect ();
-  emit NewPermEditBox (objectName());
-  boxCounter++;
 }
 
 void
@@ -163,14 +170,25 @@ void
 PermEditBox::FontAction ()
 {
   qDebug () << " Font Action called";
-  QFont defont;
-  if (scin->lexer()) {
+  QFont defont; bool ok;
+  bool useLexer = (scin->lexer() != 0);
+  if (useLexer) {
     defont = scin->lexer()->defaultFont();
-    qDebug () << " Lexer font " << defont; 
   } else {
     defont = scin->font();
-    qDebug () << " Base font " << defont; 
   }
+  QFont newFont = QFontDialog::getFont(
+                  &ok, defont, this, tr("Choose Font"));
+  if (ok) {
+      // the user clicked OK and font is set to the font the user selected
+    qDebug () << " old font was " << defont;
+    qDebug () << " they want new font " << newFont;
+    if (useLexer) {
+      scin->lexer()->setFont (newFont);
+    } else {
+      scin->setFont (newFont);
+    }
+  } 
 }
 
 void
@@ -375,6 +393,7 @@ PermEditBox::LoadFile (const QString & filename)
       return false;
     }
     scin->setText (bytes);
+    scin->setModified (false);
     QsciLexer * lex (0);
     if (suf.length() > 0) {
       lex = LexerChooser::Ref().NewLexerBySuffix (this,suf.toLower());

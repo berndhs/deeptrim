@@ -85,6 +85,7 @@ protected:
 
 private:
 
+  void SetupMenus ();
   void Connect ();
   void TitleChange (const QString & newTitle);
 

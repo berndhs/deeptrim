@@ -1,4 +1,5 @@
-
+#ifndef FONT_CHOOSER_H
+#define FONT_CHOOSER_H
 
 /****************************************************************
  * This file is distributed under the following license:
@@ -21,3 +22,25 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
+#include <QFont>
+#include <QFontDatabase>
+
+namespace permute
+{
+class FontChooser
+{
+  bool NewFontDialog (QFont & newFont);
+
+  static FontChooser & Ref ();
+
+private:
+
+  FontChooser ();
+
+  QFontDatabase  fontDB;
+  
+};
+
+} // namespace
+
+#endif

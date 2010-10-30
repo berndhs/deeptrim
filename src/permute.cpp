@@ -162,6 +162,7 @@ Permute::Run ()
   Settings().setValue ("styles/tooltiplen",tooltiplen);
   show ();
   Settings().sync ();
+  NewFile ();
 }
 
 void
