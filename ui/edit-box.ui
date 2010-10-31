@@ -29,6 +29,40 @@
     <item row="0" column="0">
      <layout class="QHBoxLayout" name="buttonLayout">
       <item>
+       <widget class="QPushButton" name="saveButton">
+        <property name="toolTip">
+         <string>Save File</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../permute.qrc">
+          <normaloff>:/icons/document-save.png</normaloff>:/icons/document-save.png</iconset>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="saveAsButton">
+        <property name="toolTip">
+         <string>Save File As...</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../permute.qrc">
+          <normaloff>:/icons/document-save-as.png</normaloff>:/icons/document-save-as.png</iconset>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="Line" name="line_2">
         <property name="orientation">
          <enum>Qt::Vertical</enum>

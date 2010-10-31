@@ -211,6 +211,8 @@ PermEditBox::Connect ()
            this, SLOT (CursorChange (int, int)));
   connect (scin, SIGNAL (modificationChanged(bool)),
            this, SLOT (ModifyChanged (bool)));
+  connect (saveButton, SIGNAL (clicked()), this, SLOT (SaveAction()));
+  connect (saveAsButton, SIGNAL (clicked()), this, SLOT (SaveAsAction()));
   connect (undoButton, SIGNAL (clicked()), scin, SLOT (undo()));
   connect (redoButton, SIGNAL (clicked()), scin, SLOT (redo()));
 }
@@ -581,7 +583,7 @@ PermEditBox::LoadFile (const QString & filename)
     } else {
       currentType = QString ("none");
       QFont font;
-      bool customFont = FontChooser::Ref().LookupFont ("", font);
+      bool customFont = FontChooser::Ref().LookupFont (currentType, font);
       if (customFont) {
         scin->setFont (font);
       }
