@@ -150,7 +150,14 @@ Permute::Run ()
   restoreState (Settings().value ("states/mainstate").toByteArray());
   show ();
   Settings().sync ();
-  NewFile ();
+  if (args.size() == 0) {
+    NewFile ();
+  } else {
+    QStringList::iterator sit;
+    for (sit = args.begin(); sit != args.end(); sit++) {
+      OpenFile (*sit);
+    }
+  }
 }
 
 void
@@ -229,23 +236,29 @@ Permute::OpenFile ()
                              info.path(),
                              tr ("Any file (*)"));
   if (oldFile.length() > 0) {
-    PermEditBox * newEdit = new PermEditBox (tr("File Edit"),this);
-    bool ok = newEdit->LoadFile (oldFile);
-    if (ok) {
-      newEdit->setAllowedAreas (Qt::AllDockWidgetAreas);
-      newEdit->setFeatures (QDockWidget::DockWidgetClosable 
-                           | QDockWidget::DockWidgetMovable
-                           | QDockWidget::DockWidgetFloatable
-                           );
-      AddDockWidget (Qt::RightDockWidgetArea, newEdit);
-      NewTag (newEdit->Title(), newEdit);
-      connect (newEdit, SIGNAL (NewTitle (QString, PermEditBox *)),
-               this, SLOT (NewTag (QString, PermEditBox *)));
-      connect (newEdit, SIGNAL (TitleGone (PermEditBox *)),
-               this, SLOT (RemoveTag (PermEditBox *)));
-    } else {
-      delete newEdit;
-    }
+    OpenFile (oldFile);
+  }
+}
+
+void
+Permute::OpenFile (const QString & filename)
+{
+  PermEditBox * newEdit = new PermEditBox (tr("File Edit"),this);
+  bool ok = newEdit->LoadFile (filename);
+  if (ok) {
+    newEdit->setAllowedAreas (Qt::AllDockWidgetAreas);
+    newEdit->setFeatures (QDockWidget::DockWidgetClosable 
+                         | QDockWidget::DockWidgetMovable
+                         | QDockWidget::DockWidgetFloatable
+                         );
+    AddDockWidget (Qt::RightDockWidgetArea, newEdit);
+    NewTag (newEdit->Title(), newEdit);
+    connect (newEdit, SIGNAL (NewTitle (QString, PermEditBox *)),
+             this, SLOT (NewTag (QString, PermEditBox *)));
+    connect (newEdit, SIGNAL (TitleGone (PermEditBox *)),
+             this, SLOT (RemoveTag (PermEditBox *)));
+  } else {
+    delete newEdit;
   }
 }
 

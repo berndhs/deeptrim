@@ -92,6 +92,7 @@ main (int argc, char *argv[])
   app.setWindowIcon (permute.windowIcon());
   permute.Init (app);
   permute.AddConfigMessages (configMessages);
+  permute.CommandArgs (opts.Arguments());
 
   permute.Run ();
   result = app.exec ();

@@ -87,6 +87,7 @@ private:
 
   void  Connect ();
   void  CloseCleanup ();
+  void  OpenFile (const QString & filename);
   void  AddDockWidget ( Qt::DockWidgetArea area, 
                         QDockWidget * dockwidget );
   void  AddDockWidget ( Qt::DockWidgetArea area, 
