@@ -38,6 +38,7 @@
 #include "lexer-chooser.h"
 #include "deliberate.h"
 #include "font-chooser.h"
+#include "search-dialog.h"
 
 using namespace deliberate;
 
@@ -215,6 +216,10 @@ PermEditBox::Connect ()
   connect (saveAsButton, SIGNAL (clicked()), this, SLOT (SaveAsAction()));
   connect (undoButton, SIGNAL (clicked()), scin, SLOT (undo()));
   connect (redoButton, SIGNAL (clicked()), scin, SLOT (redo()));
+  connect (searchButton, SIGNAL (clicked()),
+           this, SLOT (DoSearch()));
+  connect (replaceButton, SIGNAL (clicked()),
+           this, SLOT (DoReplace()));
 }
 
 void
@@ -593,6 +598,20 @@ PermEditBox::LoadFile (const QString & filename)
     return true;
   }
   return ok;
+}
+
+void
+PermEditBox::DoSearch ()
+{
+  qDebug () << " search for " << objectName();
+  SearchDialog::Ref().DoSearch (scin);
+}
+
+void
+PermEditBox::DoReplace ()
+{
+  qDebug () << " search-replace for " << objectName();
+  SearchDialog::Ref().DoReplace (scin);
 }
 
 QString

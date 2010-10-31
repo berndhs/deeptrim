@@ -58,6 +58,7 @@ Permute::Permute (QWidget *parent)
    configEdit (this),
    hiddenBox (false),
    helpView (0),
+   searcher (this),
    again (false),
    tooltiplen (40),
    emphedBox (0)
@@ -286,6 +287,8 @@ Permute::OpenFile (const QString & filename)
     connect (newEdit, SIGNAL (TitleGone (PermEditBox *)),
              this, SLOT (RemoveTag (PermEditBox *)));
     qDebug () << " new Edit stylesheet " << newEdit->styleSheet ();
+    newEdit->raise ();
+    newEdit->setFocus ();
   } else {
     delete newEdit;
   }
@@ -299,7 +302,6 @@ qDebug () << " add dock widget " << dockwidget << " in area " << area;
   QMainWindow::addDockWidget (area, dockwidget);
   tabifyDockWidget (hiddenBox, dockwidget);
   dockwidget->setFocus ();
-  ListChildren (dockwidget);
 }
 
 void

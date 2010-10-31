@@ -60,6 +60,8 @@ public:
 public slots:
 
   void SetTitle (QString newTitle);
+  void DoSearch ();
+  void DoReplace ();
 
 private slots:
 

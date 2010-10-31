@@ -32,6 +32,7 @@
 #include "config-edit.h"
 #include "deliberate.h"
 #include "helpview.h"
+#include "search-dialog.h"
 
 class QListWidgetItem;
 class QCloseEvent;
@@ -104,6 +105,7 @@ private:
   PermEditBox   *hiddenBox;
   QStringList    configMessages;
   HelpView      *helpView;
+  SearchDialog   searcher;
 
   QStringList    args;
   bool           again;

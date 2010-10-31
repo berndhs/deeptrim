@@ -64,6 +64,7 @@ FORMS = \
         ui/helpwin.ui \
         ui/edit-box.ui \
         ui/pick-string.ui \
+        ui/search.ui \
         
 
 HEADERS = \
@@ -81,6 +82,7 @@ HEADERS = \
           src/all-lexers.h \
           src/font-chooser.h \
           src/pick-string.h \
+          src/search-dialog.h \
 
 
 SOURCES = \
@@ -96,4 +98,5 @@ SOURCES = \
           src/lexer-chooser.cpp \
           src/font-chooser.cpp \
           src/pick-string.cpp \
+          src/search-dialog.cpp \
 
