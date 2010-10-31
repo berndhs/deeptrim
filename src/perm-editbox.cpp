@@ -58,6 +58,7 @@ qDebug () << " new box with name " << title;
   QString oldName = objectName();
   setObjectName (QString ("PermEditBox-%1")
                          .arg(boxCounter));
+  setWindowIcon (parentWidget()->windowIcon());
   setupUi (this);
   gridLayout->removeItem (buttonLayout);
   gridLayout->removeWidget (scinEdit);
@@ -65,7 +66,9 @@ qDebug () << " new box with name " << title;
   setWindowIcon (parent->windowIcon());
   setTitleBarWidget (0);
   SetupMenus ();
+  SetupShortcuts ();
   SetupIcons ();
+  windowMenu->setVisible (false);
   gridLayout->addWidget (topMenu,0,0,1,1);
   gridLayout->addItem (buttonLayout, 0,1,1,1);
   scin = scinEdit; //  new QsciScintilla (this);
@@ -77,39 +80,50 @@ qDebug () << " new box with name " << title;
   normalStyle = Settings().value ("editbox/normalstyle",normalStyle).toString();
   emphStyle = Settings().value ("editbox/emphstyle",emphStyle).toString();
   setStyleSheet (QString (" %1 ").arg (normalStyle));
+  TopChanged (isFloating());
 }
 
 void
 PermEditBox::SetupMenus ()
 {
   topMenu = new QMenuBar (dockWidgetContents);
+  windowMenu = new QMenu (tr(""), topMenu);
   fileMenu = new QMenu (tr("File..."), topMenu);
   configMenu = new QMenu (tr("Config"), topMenu);
+
+  actionDock = new QAction (tr("Dock"), this);
+  actionFloat = new QAction (tr("Float"), this);
+  actionMaxi = new QAction (tr("Maximize"), this);
+  actionNorm = new QAction (tr("Normalize"), this);
+  actionCloseWin = new QAction (tr("Close"), this);
+
   actionSave = new QAction (tr("&Save"),this);
-  actionSave->setShortcut (QKeySequence::Save);
   actionSaveAs = new QAction (tr("Save As..."),this);
-  actionSaveAs->setShortcut (QKeySequence::SaveAs);
   actionLoad = new QAction (tr("Open File"),this);
-  actionLoad->setShortcut (QKeySequence::Open);
   actionInsertFile = new QAction (tr("Insert File"), this);
+
   actionFontLocal = new QAction (tr("Font for file"),this);
   actionFontGlobal = new QAction (tr("Font for file type"),this);
   actionLang = new QAction (tr("File Type"),this);
   actionClose = new QAction (tr("Close"), this);
-  actionClose->setShortcut (QKeySequence::Close);
-  iconAction = new QAction (parentWidget()->windowIcon(), tr(""),this);
-  iconAction->setVisible (false);
-  iconAction->setToolTip (tr("%1 Editor")
-                          .arg(QApplication::applicationName()));
+
+  windowMenu->addAction (actionDock);
+  windowMenu->addAction (actionFloat);
+  windowMenu->addAction (actionMaxi);
+  windowMenu->addAction (actionNorm);
+  windowMenu->addAction (actionCloseWin);
+
   fileMenu->addAction (actionSave);
   fileMenu->addAction (actionSaveAs);
   fileMenu->addAction (actionLoad);
   fileMenu->addAction (actionInsertFile);
   fileMenu->addAction (actionClose);
+
   configMenu->addAction (actionFontLocal);
   configMenu->addAction (actionFontGlobal);
   configMenu->addAction (actionLang);
-  topMenu->addAction (iconAction);
+
+  topMenu->addAction (windowMenu->menuAction ());
   topMenu->addAction (fileMenu->menuAction());
   topMenu->addAction (configMenu->menuAction());
   topMenu->setSizePolicy (QSizePolicy (QSizePolicy::Expanding, 
@@ -119,8 +133,21 @@ PermEditBox::SetupMenus ()
 void
 PermEditBox::SetupIcons ()
 {
+  windowMenu->setIcon (QIcon(":/deeptrim.png"));
   undoButton->setIcon (QIcon (":/icons/edit-undo.png"));
   redoButton->setIcon (QIcon (":/icons/edit-redo.png"));
+
+  actionDock->setIconVisibleInMenu (true);
+  actionDock->setIcon (QIcon (":/icons/minimize.png"));
+  actionFloat->setIconVisibleInMenu (true);
+  actionFloat->setIcon (QIcon (":/icons/float.png"));
+  actionMaxi->setIconVisibleInMenu (true);
+  actionMaxi->setIcon (QIcon (":/icons/maximize.png"));
+  actionNorm->setIconVisibleInMenu (true);
+  actionNorm->setIcon (QIcon (":/icons/normalize.png"));
+  actionCloseWin->setIconVisibleInMenu (true);
+  actionCloseWin->setIcon (QIcon (":/icons/document-close.png"));
+
   actionSave->setIconVisibleInMenu (true);
   actionSave->setIcon (QIcon (":/icons/document-save.png"));
   actionSaveAs->setIconVisibleInMenu (true);
@@ -131,10 +158,20 @@ PermEditBox::SetupIcons ()
   actionInsertFile->setIcon (QIcon (":/icons/insert-text.png"));
   actionClose->setIconVisibleInMenu (true);
   actionClose->setIcon (QIcon (":/icons/document-close.png"));
+
   actionFontLocal->setIconVisibleInMenu (true);
   actionFontLocal->setIcon (QIcon (":/icons/font-this.png"));
   actionFontGlobal->setIconVisibleInMenu (true);
   actionFontGlobal->setIcon (QIcon (":/icons/font-all.png"));
+}
+
+void
+PermEditBox::SetupShortcuts ()
+{
+  actionSave->setShortcut (QKeySequence::Save);
+  actionSaveAs->setShortcut (QKeySequence::SaveAs);
+  actionLoad->setShortcut (QKeySequence::Open);
+  actionClose->setShortcut (QKeySequence::Close);
 }
 
 void
@@ -144,6 +181,16 @@ PermEditBox::Connect ()
            this, SLOT (DockMoved (Qt::DockWidgetArea)));
   connect (this, SIGNAL (topLevelChanged (bool)),
            this, SLOT (TopChanged (bool)));
+  connect (actionDock, SIGNAL (triggered()),
+           this, SLOT (MakeDock()));
+  connect (actionFloat, SIGNAL (triggered()),
+           this, SLOT (MakeFloat()));
+  connect (actionMaxi, SIGNAL (triggered()),
+           this, SLOT (showMaximized()));
+  connect (actionNorm, SIGNAL (triggered()),
+           this, SLOT (showNormal ()));
+  connect (actionCloseWin, SIGNAL (triggered()),
+           this, SLOT (CloseAction ()));
   connect (actionSave, SIGNAL (triggered()),
            this, SLOT (SaveAction()));
   connect (actionSaveAs, SIGNAL (triggered()),
@@ -160,8 +207,6 @@ PermEditBox::Connect ()
            this, SLOT (LangAction ()));
   connect (actionClose, SIGNAL (triggered()),
            this, SLOT (CloseAction ()));
-  connect (iconAction, SIGNAL (triggered()),
-           this, SLOT (IconAction ()));
   connect (scin, SIGNAL (cursorPositionChanged (int, int)),
            this, SLOT (CursorChange (int, int)));
   connect (scin, SIGNAL (modificationChanged(bool)),
@@ -232,10 +277,12 @@ void
 PermEditBox::TopChanged (bool isTop)
 {
   qDebug () << " Top Changed " << isTop;
-  iconAction->setVisible (isTop);
-  if (isTop) {
-    setWindowIcon (parentWidget()->windowIcon());
-  }
+qDebug () << " CHANGED window flags " << windowFlags ();
+qDebug () << " full " << isFullScreen() << " max " << isMaximized();
+  actionMaxi->setEnabled (isTop);
+  actionNorm->setEnabled (isTop);
+  actionDock->setEnabled (isTop);
+  actionFloat->setEnabled (!isTop);
 }
 
 void
@@ -293,10 +340,16 @@ PermEditBox::LangAction ()
 }
 
 void
-PermEditBox::IconAction ()
+PermEditBox::MakeDock ()
 {
-  qDebug () << " IconAction ";
+  qDebug () << " MakeDock ";
   setFloating (false);
+}
+
+void
+PermEditBox::MakeFloat ()
+{
+  setFloating (true);
 }
 
 void
@@ -305,6 +358,7 @@ PermEditBox::CloseAction ()
   if (scin->isModified()) {
     AskSave ();
   }
+  emit TitleGone (this);
   disconnect ();
   close ();
 }

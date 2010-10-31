@@ -32,6 +32,10 @@
 <file alias="search.png">images/icons/edit-find.png</file>
 <file alias="search-replace.png">images/icons/system-search.png</file>
 <file alias="folder-open.png">images/icons/folder-open.png</file>
+<file alias="minimize.png">images/icons/view-minimize.png</file>
+<file alias="maximize.png">images/icons/view-fullscreen.png</file>
+<file alias="normalize.png">images/icons/view-restore.png</file>
+<file alias="float.png">images/icons/weather-clouds.png</file>
 </qresource>
 <qresource prefix="/help">
   <file alias="LICENSE.txt">help/LICENSE.txt</file>

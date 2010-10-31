@@ -21,7 +21,7 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
-
+#include <Qt>
 #include <QDockWidget>
 #include <Qsci/qsciscintilla.h>
 #include <QFont>
@@ -69,7 +69,8 @@ private slots:
   void FontLocalAction ();
   void FontGlobalAction ();
   void LangAction ();
-  void IconAction ();
+  void MakeDock ();
+  void MakeFloat ();
   void LoadAction ();
   void LoadInsertAction ();
   void SaveAction ();
@@ -92,28 +93,34 @@ private:
 
   void SetupMenus ();
   void SetupIcons ();
+  void SetupShortcuts ();
   void Connect ();
   void TitleChange (const QString & newTitle);
 
-  QsciScintilla *scin;
-  bool           wasModified;
-  QString        currentFile;
-  QFont          defaultFont;
-  QMenuBar      *topMenu;
-  QMenu         *fileMenu;
-  QMenu         *configMenu;
-  QAction       *iconAction;
-  QAction       *actionSave;
-  QAction       *actionSaveAs;
-  QAction       *actionFontLocal;
-  QAction       *actionFontGlobal;
-  QAction       *actionLang;
-  QAction       *actionLoad;
-  QAction       *actionInsertFile;
-  QAction       *actionClose;
+  QsciScintilla    *scin;
+  bool              wasModified;
+  QString           currentFile;
+  QFont             defaultFont;
+  QMenuBar         *topMenu;
+  QMenu            *fileMenu;
+  QMenu            *configMenu;
+  QMenu            *windowMenu;
+  QAction          *actionDock;
+  QAction          *actionFloat;
+  QAction          *actionMaxi;
+  QAction          *actionNorm;
+  QAction          *actionCloseWin;
+  QAction          *actionSave;
+  QAction          *actionSaveAs;
+  QAction          *actionFontLocal;
+  QAction          *actionFontGlobal;
+  QAction          *actionLang;
+  QAction          *actionLoad;
+  QAction          *actionInsertFile;
+  QAction          *actionClose;
 
-  QString        normalStyle;
-  QString        emphStyle;
+  QString           normalStyle;
+  QString           emphStyle;
 
   static int boxCounter;
 };
