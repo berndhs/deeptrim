@@ -37,6 +37,7 @@
 #include <QFontDialog>
 #include "lexer-chooser.h"
 #include "deliberate.h"
+#include "font-chooser.h"
 
 using namespace deliberate;
 
@@ -49,7 +50,6 @@ PermEditBox::PermEditBox (const QString & title,
                QWidget * parent, 
                Qt::WindowFlags flags)
   :QDockWidget (title, parent, flags),
-   scin (0),
    wasModified (false),
    normalStyle (""),
    emphStyle ("background-color: lightgreen")
@@ -61,7 +61,7 @@ qDebug () << " new box with name " << title;
   setWindowIcon (parentWidget()->windowIcon());
   setupUi (this);
   gridLayout->removeItem (buttonLayout);
-  gridLayout->removeWidget (scinEdit);
+  gridLayout->removeWidget (scin);
   setWindowTitle (title);
   setWindowIcon (parent->windowIcon());
   setTitleBarWidget (0);
@@ -71,7 +71,6 @@ qDebug () << " new box with name " << title;
   windowMenu->setVisible (false);
   gridLayout->addWidget (topMenu,0,0,1,1);
   gridLayout->addItem (buttonLayout, 0,1,1,1);
-  scin = scinEdit; //  new QsciScintilla (this);
   scin->setObjectName (QString ("Scin-%1").arg (boxCounter));
   gridLayout->addWidget (scin, 1,0,2,2);
   Connect ();
@@ -133,6 +132,7 @@ PermEditBox::SetupMenus ()
 void
 PermEditBox::SetupIcons ()
 {
+  windowMenu->menuAction()->setIconVisibleInMenu(true);
   windowMenu->setIcon (QIcon(":/deeptrim.png"));
   undoButton->setIcon (QIcon (":/icons/edit-undo.png"));
   redoButton->setIcon (QIcon (":/icons/edit-redo.png"));
@@ -288,7 +288,7 @@ qDebug () << " full " << isFullScreen() << " max " << isMaximized();
 void
 PermEditBox::FontLocalAction ()
 {
-  qDebug () << " Font Action called";
+  qDebug () << " Font Local Action called";
   QFont defont; bool ok;
   bool useLexer = (scin->lexer() != 0);
   if (useLexer) {
@@ -313,6 +313,27 @@ PermEditBox::FontLocalAction ()
 void
 PermEditBox::FontGlobalAction ()
 {
+  qDebug () << " Font Global Action called";
+  QFont defont; bool ok;
+  bool useLexer = (scin->lexer() != 0);
+  if (useLexer) {
+    defont = scin->lexer()->defaultFont();
+  } else {
+    defont = scin->font();
+  }
+  QFont newFont = QFontDialog::getFont(
+                  &ok, defont, this, tr("Choose Font"));
+  if (ok) {
+      // the user clicked OK and font is set to the font the user selected
+    qDebug () << " old font was " << defont;
+    qDebug () << " they want new font " << newFont;
+    if (useLexer) {
+      scin->lexer()->setFont (newFont);
+    } else {
+      scin->setFont (newFont);
+    }
+    FontChooser::Ref().StoreFont (currentType, newFont);
+  } 
 }
 
 void
@@ -335,6 +356,7 @@ PermEditBox::LangAction ()
                                                     scin, pickedOne, lang);
     if (pickedOne) {
       scin->setLexer (newLex);
+      currentType = QString (newLex->language());
     }
   }
 }
@@ -515,6 +537,7 @@ PermEditBox::Clear ()
 {
   scin->clear ();
   scin->setLexer (0);
+  currentType = QString ("none");
   currentFile.clear ();
 }
 
@@ -548,6 +571,21 @@ PermEditBox::LoadFile (const QString & filename)
       }
     }
     scin->setLexer (lex);
+    if (lex) {
+      currentType = QString (lex->language());
+      QFont font;
+      bool customFont = FontChooser::Ref().LookupFont (currentType, font);
+      if (customFont) {
+        lex->setFont (font);
+      }
+    } else {
+      currentType = QString ("none");
+      QFont font;
+      bool customFont = FontChooser::Ref().LookupFont ("", font);
+      if (customFont) {
+        scin->setFont (font);
+      }
+    }
     currentFile = file.fileName();
     TitleChange (QFileInfo (currentFile).fileName());
     return true;

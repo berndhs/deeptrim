@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
+ <author>Bernd Stramm</author>
  <class>EditBox</class>
  <widget class="QDockWidget" name="EditBox">
   <property name="geometry">
@@ -138,7 +139,7 @@
      </layout>
     </item>
     <item row="1" column="0">
-     <widget class="QsciScintilla" name="scinEdit">
+     <widget class="QsciScintilla" name="scin">
       <property name="toolTip">
        <string/>
       </property>

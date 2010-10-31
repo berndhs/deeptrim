@@ -23,22 +23,26 @@
  ****************************************************************/
 
 #include <QFont>
-#include <QFontDatabase>
+#include <QMap>
 
 namespace permute
 {
 class FontChooser
 {
-  bool NewFontDialog (QFont & newFont);
+public:
 
   static FontChooser & Ref ();
+  
+  void  Init ();
+  void  StoreFont (const QString & key, const QFont & font);
+  bool  LookupFont (const QString & key, QFont & font);
 
 private:
 
   FontChooser ();
+  static FontChooser * theOnly;
 
-  QFontDatabase  fontDB;
-  
+  QMap  <QString, QFont>   fontMap;
 };
 
 } // namespace

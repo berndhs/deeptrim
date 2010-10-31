@@ -97,9 +97,9 @@ private:
   void Connect ();
   void TitleChange (const QString & newTitle);
 
-  QsciScintilla    *scin;
   bool              wasModified;
   QString           currentFile;
+  QString           currentType;
   QFont             defaultFont;
   QMenuBar         *topMenu;
   QMenu            *fileMenu;

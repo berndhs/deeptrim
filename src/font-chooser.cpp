@@ -1,4 +1,5 @@
 
+#include "font-chooser.h"
 
 /****************************************************************
  * This file is distributed under the following license:
@@ -20,4 +21,64 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
+
+#include <QDebug>
+#include "deliberate.h"
+
+using namespace deliberate;
+
+namespace permute
+{
+
+FontChooser* FontChooser::theOnly (0);
+
+FontChooser::FontChooser ()
+{
+}
+
+FontChooser &
+FontChooser::Ref ()
+{
+  if (theOnly == 0) {
+    theOnly = new FontChooser();
+    theOnly->Init ();
+    if (theOnly == 0) {
+      qFatal ("Memory Allocation Failure for FontChooser");
+    }
+  }
+  return *theOnly;
+}
+
+void
+FontChooser::StoreFont (const QString & key, const QFont & font)
+{
+  fontMap [key] = font;
+  Settings().setValue (QString ("customfonts/%1").arg(key), font.toString());
+  Settings().sync ();
+  qDebug () << " set font for " << key;
+}
+
+void
+FontChooser::Init ()
+{
+}
+
+bool
+FontChooser::LookupFont (const QString & key, QFont & font)
+{
+  if (fontMap.contains (key)) {
+    font = fontMap [key];
+    return true;
+  }
+  QString settKey (QString("customfonts/%1").arg(key));
+  if (Settings().contains (settKey)) {
+    QString fontString = Settings().value (settKey).toString ();
+    font.fromString (fontString);
+    fontMap [key] = font;
+    return true;
+  }
+  return false;
+}
+
+} // namespace
 
