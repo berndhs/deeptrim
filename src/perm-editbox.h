@@ -54,6 +54,8 @@ public:
   QString FileName ();
 
   QString Title ();
+ 
+  void SetEmphasis (bool high=true);
 
 public slots:
 
@@ -61,6 +63,7 @@ public slots:
 
 private slots:
 
+  void ModifyChanged (bool isModified);
   void DockMoved (Qt::DockWidgetArea area);
   void TopChanged (bool isTop);
   void FontLocalAction ();
@@ -93,6 +96,7 @@ private:
   void TitleChange (const QString & newTitle);
 
   QsciScintilla *scin;
+  bool           wasModified;
   QString        currentFile;
   QFont          defaultFont;
   QMenuBar      *topMenu;
@@ -107,6 +111,9 @@ private:
   QAction       *actionLoad;
   QAction       *actionInsertFile;
   QAction       *actionClose;
+
+  QString        normalStyle;
+  QString        emphStyle;
 
   static int boxCounter;
 };

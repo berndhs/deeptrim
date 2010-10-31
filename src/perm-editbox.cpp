@@ -36,6 +36,9 @@
 #include <QFileDialog>
 #include <QFontDialog>
 #include "lexer-chooser.h"
+#include "deliberate.h"
+
+using namespace deliberate;
 
 namespace permute
 {
@@ -46,7 +49,10 @@ PermEditBox::PermEditBox (const QString & title,
                QWidget * parent, 
                Qt::WindowFlags flags)
   :QDockWidget (title, parent, flags),
-   scin (0)
+   scin (0),
+   wasModified (false),
+   normalStyle (""),
+   emphStyle ("background-color: lightgreen")
 {
 qDebug () << " new box with name " << title;
   QString oldName = objectName();
@@ -68,6 +74,9 @@ qDebug () << " new box with name " << title;
   Connect ();
   emit NewPermEditBox (objectName());
   boxCounter++;
+  normalStyle = Settings().value ("editbox/normalstyle",normalStyle).toString();
+  emphStyle = Settings().value ("editbox/emphstyle",emphStyle).toString();
+  setStyleSheet (QString (" %1 ").arg (normalStyle));
 }
 
 void
@@ -155,6 +164,8 @@ PermEditBox::Connect ()
            this, SLOT (IconAction ()));
   connect (scin, SIGNAL (cursorPositionChanged (int, int)),
            this, SLOT (CursorChange (int, int)));
+  connect (scin, SIGNAL (modificationChanged(bool)),
+           this, SLOT (ModifyChanged (bool)));
   connect (undoButton, SIGNAL (clicked()), scin, SLOT (undo()));
   connect (redoButton, SIGNAL (clicked()), scin, SLOT (redo()));
 }
@@ -163,6 +174,36 @@ void
 PermEditBox::SetText (const QString & text)
 {
   scin->setText (text);
+}
+
+void
+PermEditBox::ModifyChanged (bool isModified)
+{
+  if (isModified != wasModified) {
+    wasModified = isModified;
+    QString title = windowTitle();
+    if (isModified) {
+      title.prepend ('*');
+      TitleChange (title);
+    } else {
+      if (title.startsWith('*')) {
+        title.remove (0,1);
+        TitleChange (title);
+      }
+    }
+  }
+}
+
+void
+PermEditBox::SetEmphasis (bool high)
+{
+  if (high) {
+    setStyleSheet (QString (" %1 ").arg(emphStyle));
+  } else {
+    setStyleSheet (QString (" %1 ").arg(normalStyle));
+  }
+  update ();
+  qDebug () << objectName () << windowTitle() << styleSheet ();
 }
 
 void
@@ -264,6 +305,7 @@ PermEditBox::CloseAction ()
   if (scin->isModified()) {
     AskSave ();
   }
+  disconnect ();
   close ();
 }
 

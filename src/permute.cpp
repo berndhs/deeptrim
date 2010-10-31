@@ -59,7 +59,8 @@ Permute::Permute (QWidget *parent)
    hiddenBox (false),
    helpView (0),
    again (false),
-   tooltiplen (40)
+   tooltiplen (40),
+   emphedBox (0)
 {
   ui.setupUi (this);
   setDockOptions (QMainWindow::AnimatedDocks
@@ -74,6 +75,21 @@ Permute::Permute (QWidget *parent)
   helpView = new HelpView (this);
   helpView->setWindowIcon (windowIcon());
   Connect ();
+  setStyleSheet (
+       " QDockWidget { "
+       "     border-top: 3px solid blue;"
+       "     border-left: 2px solid lightblue;"
+       "     border-right: 2px solid lightblue;"
+       "     border-bottom: 1px solid lightgray;"
+       " }"
+       " QDockWidget::title { "
+       "   text-align: left; "
+       "   font-style: italic; "
+       "   background: white; "
+       "   padding-left: 20px; "
+       " } "
+       );
+qDebug () << " hidden box stylesheet " << hiddenBox->styleSheet ();
 }
 
 void
@@ -87,6 +103,8 @@ Permute::Connect ()
            this, SLOT (EditSettings()));
   connect (ui.actionNewFile, SIGNAL (triggered()), this, SLOT (NewFile()));
   connect (ui.actionOpenFile, SIGNAL (triggered()), this, SLOT (OpenFile()));
+  connect (ui.titleList, SIGNAL (itemClicked (QListWidgetItem*)),
+           this, SLOT (TitleItemClicked (QListWidgetItem*)));
 }
 
 void
@@ -94,10 +112,19 @@ Permute::Init (QApplication & pa)
 {
   app = &pa;
   connect (app, SIGNAL (lastWindowClosed()), this, SLOT (Exiting()));
+  QString normalStyle ("");
+  QString emphStyle ("background-color: lightgreen");
+  normalStyle = Settings().value ("editbox/normalstyle",normalStyle).toString();
+  emphStyle = Settings().value ("editbox/emphstyle",emphStyle).toString();
+  Settings().setValue ("editbox/normalstyle",normalStyle);
+  Settings().setValue ("editbox/emphstyle",emphStyle);
+  QString mainStyle = Settings().value ("mainbox/stylesheet",
+                         styleSheet()).toString();
+  Settings().setValue ("mainbox/stylesheet",mainStyle);
+  setStyleSheet (mainStyle);
   Settings().sync();
   initDone = true;
-  qDebug () << " main is " << objectName() << size();
-  //ListChildren (this);
+  qDebug () << " main window style " << styleSheet();
 }
 
 void
@@ -257,6 +284,7 @@ Permute::OpenFile (const QString & filename)
              this, SLOT (NewTag (QString, PermEditBox *)));
     connect (newEdit, SIGNAL (TitleGone (PermEditBox *)),
              this, SLOT (RemoveTag (PermEditBox *)));
+    qDebug () << " new Edit stylesheet " << newEdit->styleSheet ();
   } else {
     delete newEdit;
   }
@@ -338,7 +366,28 @@ Permute::RemoveTag (PermEditBox *box)
     ui.titleList->takeItem (row);
     titleItems.remove (box);
     titleBoxes.remove (item);
+    if (box == emphedBox) {
+      box->SetEmphasis (false);
+      emphedBox = 0;
+    }
     delete item;
+  }
+}
+
+void
+Permute::TitleItemClicked (QListWidgetItem *item)
+{
+  if (item) {
+    if (titleBoxes.contains (item)) {
+      PermEditBox * box = titleBoxes [item];
+      box->raise ();
+      box->setFocus ();
+      if (emphedBox && emphedBox != box) {
+        emphedBox->SetEmphasis (false);
+      }
+      emphedBox = box;
+      emphedBox->SetEmphasis (true);
+    }
   }
 }
 

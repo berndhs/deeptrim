@@ -1,7 +1,7 @@
 <!DOCTYPE RCC>
 <RCC version="1.0">
 <qresource>
-<file>deeptrim.png</file>
+<file alias="deeptrim.png">images/deeptrim.png</file>
 </qresource>
 <qresource prefix="/icons">
 <file alias="document-open.png">images/icons/document-open.png</file>
@@ -31,6 +31,7 @@
 <file alias="forward.png">images/icons/arrow-right.png</file>
 <file alias="search.png">images/icons/edit-find.png</file>
 <file alias="search-replace.png">images/icons/system-search.png</file>
+<file alias="folder-open.png">images/icons/folder-open.png</file>
 </qresource>
 <qresource prefix="/help">
   <file alias="LICENSE.txt">help/LICENSE.txt</file>

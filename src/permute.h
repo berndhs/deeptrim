@@ -82,6 +82,7 @@ private slots:
   void EditSettings ();
   void OpenFile ();
   void NewFile ();
+  void TitleItemClicked (QListWidgetItem *item);
 
 private:
 
@@ -111,6 +112,8 @@ private:
 
   QMap <PermEditBox *, QListWidgetItem *>  titleItems;
   QMap <QListWidgetItem *, PermEditBox *>  titleBoxes;
+  
+  PermEditBox   *emphedBox;
 
 };
 
