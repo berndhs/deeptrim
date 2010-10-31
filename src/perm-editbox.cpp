@@ -100,6 +100,7 @@ PermEditBox::SetupMenus ()
   actionSave = new QAction (tr("&Save"),this);
   actionSaveAs = new QAction (tr("Save As..."),this);
   actionLoad = new QAction (tr("Open File"),this);
+  actionReload = new QAction (tr("Revert File"),this);
   actionInsertFile = new QAction (tr("Insert File"), this);
 
   actionFontLocal = new QAction (tr("Font for file"),this);
@@ -116,6 +117,7 @@ PermEditBox::SetupMenus ()
   fileMenu->addAction (actionSave);
   fileMenu->addAction (actionSaveAs);
   fileMenu->addAction (actionLoad);
+  fileMenu->addAction (actionReload);
   fileMenu->addAction (actionInsertFile);
   fileMenu->addAction (actionClose);
 
@@ -155,6 +157,8 @@ PermEditBox::SetupIcons ()
   actionSaveAs->setIcon (QIcon (":/icons/document-save-as.png"));
   actionLoad->setIconVisibleInMenu (true);
   actionLoad->setIcon (QIcon (":/icons/document-open.png"));
+  actionReload->setIconVisibleInMenu (true);
+  actionReload->setIcon (QIcon (":/icons/refresh.png"));
   actionInsertFile->setIconVisibleInMenu (true);
   actionInsertFile->setIcon (QIcon (":/icons/insert-text.png"));
   actionClose->setIconVisibleInMenu (true);
@@ -198,6 +202,8 @@ PermEditBox::Connect ()
            this, SLOT (SaveAsAction ()));
   connect (actionLoad, SIGNAL (triggered()),
            this, SLOT (LoadAction ()));
+  connect (actionReload, SIGNAL (triggered()),
+           this, SLOT (ReloadAction ()));
   connect (actionInsertFile, SIGNAL (triggered()),
            this, SLOT (LoadInsertAction ()));
   connect (actionFontLocal, SIGNAL (triggered()),
@@ -405,6 +411,12 @@ PermEditBox::LoadAction ()
   if (oldFile.length() > 0) {
     LoadFile (oldFile);
   }
+}
+
+void
+PermEditBox::ReloadAction ()
+{
+  LoadFile (currentFile);
 }
 
 void

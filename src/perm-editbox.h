@@ -75,6 +75,7 @@ private slots:
   void MakeFloat ();
   void LoadAction ();
   void LoadInsertAction ();
+  void ReloadAction ();
   void SaveAction ();
   void SaveAsAction ();
   void CloseAction ();
@@ -118,6 +119,7 @@ private:
   QAction          *actionFontGlobal;
   QAction          *actionLang;
   QAction          *actionLoad;
+  QAction          *actionReload;
   QAction          *actionInsertFile;
   QAction          *actionClose;
 

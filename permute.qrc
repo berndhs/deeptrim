@@ -36,6 +36,7 @@
 <file alias="maximize.png">images/icons/view-fullscreen.png</file>
 <file alias="normalize.png">images/icons/view-restore.png</file>
 <file alias="float.png">images/icons/weather-clouds.png</file>
+<file alias="refresh.png">images/icons/view-refresh.png</file>
 </qresource>
 <qresource prefix="/help">
   <file alias="LICENSE.txt">help/LICENSE.txt</file>
