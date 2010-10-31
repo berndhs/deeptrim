@@ -89,7 +89,6 @@ Permute::Permute (QWidget *parent)
        "   padding-left: 20px; "
        " } "
        );
-qDebug () << " hidden box stylesheet " << hiddenBox->styleSheet ();
 }
 
 void
@@ -257,13 +256,15 @@ Permute::EditSettings ()
 void
 Permute::OpenFile ()
 {
-  QString oldFile;
+  QStringList files;
   QFileInfo info (saveFile);
-  oldFile = QFileDialog::getOpenFileName (this, tr("Read File"),
+  files = QFileDialog::getOpenFileNames (this, tr("Open File"),
                              info.path(),
                              tr ("Any file (*)"));
-  if (oldFile.length() > 0) {
-    OpenFile (oldFile);
+  if (files.size() > 0) {
+    for (int i=0; i<files.size(); i++) {
+      OpenFile (files[i]);
+    }
   }
 }
 
@@ -384,6 +385,7 @@ Permute::TitleItemClicked (QListWidgetItem *item)
       box->setFocus ();
       if (emphedBox && emphedBox != box) {
         emphedBox->SetEmphasis (false);
+        emphedBox->lower ();
       }
       emphedBox = box;
       emphedBox->SetEmphasis (true);
