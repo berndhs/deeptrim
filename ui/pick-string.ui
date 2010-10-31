@@ -7,57 +7,48 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>345</width>
-    <height>366</height>
+    <width>232</width>
+    <height>367</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Pick Identity</string>
+   <string>Pick One</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../dchat.qrc">
-    <normaloff>:/dchatlogo.png</normaloff>:/dchatlogo.png</iconset>
+   <iconset resource="../permute.qrc">
+    <normaloff>:/deeptrim.png</normaloff>:/deeptrim.png</iconset>
   </property>
-  <widget class="QListView" name="stringList">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>10</y>
-     <width>341</width>
-     <height>321</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="pickButton">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>340</y>
-     <width>100</width>
-     <height>23</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Choose</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="cancelButton">
-   <property name="geometry">
-    <rect>
-     <x>190</x>
-     <y>340</y>
-     <width>100</width>
-     <height>23</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Cancel</string>
-   </property>
-  </widget>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0" colspan="2">
+    <widget class="QListView" name="stringList"/>
+   </item>
+   <item row="1" column="0">
+    <widget class="QPushButton" name="pickButton">
+     <property name="text">
+      <string>Choose</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../permute.qrc">
+       <normaloff>:/icons/dialog-ok.png</normaloff>:/icons/dialog-ok.png</iconset>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QPushButton" name="cancelButton">
+     <property name="text">
+      <string>Cancel</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../permute.qrc">
+       <normaloff>:/icons/dialog-cancel.png</normaloff>:/icons/dialog-cancel.png</iconset>
+     </property>
+    </widget>
+   </item>
+  </layout>
  </widget>
  <layoutdefault spacing="0" margin="0"/>
  <resources>
-  <include location="../dchat.qrc"/>
+  <include location="../permute.qrc"/>
  </resources>
  <connections/>
 </ui>

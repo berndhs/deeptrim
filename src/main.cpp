@@ -67,8 +67,6 @@ main (int argc, char *argv[])
   configMessages.append (QObject::tr("Running with Qt %1").arg(qVersion()));
   configMessages.append (QObject::tr("Using QScintilla %1")
                             .arg(QSCINTILLA_VERSION_STR));
-  configMessages.append (QString("Built on %1 %2")
-                         .arg (__DATE__).arg(__TIME__));
   for (int cm=0; cm<configMessages.size(); cm++) {
     deliberate::StdOut () << configMessages[cm] << endl;
   }

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>408</width>
-    <height>445</height>
+    <width>557</width>
+    <height>641</height>
    </rect>
   </property>
   <property name="windowIcon">
@@ -28,22 +28,97 @@
     <item row="0" column="0">
      <layout class="QHBoxLayout" name="buttonLayout">
       <item>
+       <widget class="Line" name="line_2">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QPushButton" name="undoButton">
+        <property name="toolTip">
+         <string>Undo last edit action</string>
+        </property>
         <property name="text">
-         <string>Undo</string>
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../permute.qrc">
+          <normaloff>:/icons/edit-undo.png</normaloff>:/icons/edit-undo.png</iconset>
         </property>
         <property name="shortcut">
          <string>Ctrl+Z</string>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QPushButton" name="redoButton">
+        <property name="toolTip">
+         <string>Redo last undone action</string>
+        </property>
         <property name="text">
-         <string>Redo</string>
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../permute.qrc">
+          <normaloff>:/icons/edit-redo.png</normaloff>:/icons/edit-redo.png</iconset>
         </property>
         <property name="shortcut">
          <string>Ctrl+Shift+Z</string>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="Line" name="line">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="searchButton">
+        <property name="toolTip">
+         <string>Search Text</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../permute.qrc">
+          <normaloff>:/icons/search.png</normaloff>:/icons/search.png</iconset>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton">
+        <property name="toolTip">
+         <string>Search-Replace Text</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../permute.qrc">
+          <normaloff>:/icons/search-replace.png</normaloff>:/icons/search-replace.png</iconset>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="Line" name="line_3">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
         </property>
        </widget>
       </item>

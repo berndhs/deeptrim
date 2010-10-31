@@ -57,6 +57,7 @@ Permute::Permute (QWidget *parent)
    app (0),
    configEdit (this),
    hiddenBox (false),
+   helpView (0),
    again (false),
    tooltiplen (40)
 {
@@ -66,29 +67,13 @@ Permute::Permute (QWidget *parent)
                  | QMainWindow::ForceTabbedDocks 
                  );
   setDockNestingEnabled (false);
-  QDockWidget * hiddenBoxT;
-  hiddenBoxT = new QDockWidget (tr("HiddenTop"), this);
-  hiddenBoxT->setObjectName ("HiddenTop");
-  QMainWindow::addDockWidget (Qt::TopDockWidgetArea, hiddenBoxT);
-  hiddenBoxT->resize (QSize (1,1));
-  hiddenBoxT->hide();
-  hiddenBox = new PermEditBox (tr("HiddenBottom"), this);
+  hiddenBox = new PermEditBox (tr("HiddenRight"), this);
   QMainWindow::addDockWidget (Qt::RightDockWidgetArea, hiddenBox);
+  hiddenBox->hide ();
   configEdit.setWindowIcon (windowIcon());
+  helpView = new HelpView (this);
+  helpView->setWindowIcon (windowIcon());
   Connect ();
-  QPoint belowCentral = centralWidget()->pos();
-  belowCentral.ry() += centralWidget()->size().height();
-  belowCentral.ry() += menuBar()->size().height();
-  int remainingHi = size().height();
-  qDebug () << " init remain hi " << remainingHi;
-  remainingHi -= menuBar()->size().height();
-  remainingHi -= centralWidget()->size().height();
-  qDebug () << " final remain hi " << remainingHi;
-  QSize hiddenSize = hiddenBox->TextEdit().size();
-  hiddenSize.setHeight (250);
- // hiddenBox->TextEdit().resize (hiddenSize);
-  hiddenBox->resize (hiddenSize);
-  hiddenBox->hide();
 }
 
 void
@@ -97,6 +82,7 @@ Permute::Connect ()
   connect (ui.actionQuit, SIGNAL (triggered()), this, SLOT (Quit()));
   connect (ui.actionRestart, SIGNAL (triggered()), this, SLOT (Restart()));
   connect (ui.actionAbout, SIGNAL (triggered()), this, SLOT (About()));
+  connect (ui.actionLicense, SIGNAL (triggered()), this, SLOT (License()));
   connect (ui.actionSettings, SIGNAL (triggered()),
            this, SLOT (EditSettings()));
   connect (ui.actionNewFile, SIGNAL (triggered()), this, SLOT (NewFile()));

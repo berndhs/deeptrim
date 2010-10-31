@@ -63,13 +63,15 @@ private slots:
 
   void DockMoved (Qt::DockWidgetArea area);
   void TopChanged (bool isTop);
-  void FontAction ();
+  void FontLocalAction ();
+  void FontGlobalAction ();
   void LangAction ();
   void IconAction ();
   void LoadAction ();
   void LoadInsertAction ();
   void SaveAction ();
   void SaveAsAction ();
+  void CloseAction ();
   void AskSave ();
   void CursorChange (int line, int col);
 
@@ -99,10 +101,12 @@ private:
   QAction       *iconAction;
   QAction       *actionSave;
   QAction       *actionSaveAs;
-  QAction       *actionFont;
+  QAction       *actionFontLocal;
+  QAction       *actionFontGlobal;
   QAction       *actionLang;
   QAction       *actionLoad;
   QAction       *actionInsertFile;
+  QAction       *actionClose;
 
   static int boxCounter;
 };

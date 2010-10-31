@@ -83,8 +83,11 @@ PermEditBox::SetupMenus ()
   actionLoad = new QAction (tr("Open File"),this);
   actionLoad->setShortcut (QKeySequence::Open);
   actionInsertFile = new QAction (tr("Insert File"), this);
-  actionFont = new QAction (tr("Font"),this);
+  actionFontLocal = new QAction (tr("Font for file"),this);
+  actionFontGlobal = new QAction (tr("Font for file type"),this);
   actionLang = new QAction (tr("File Type"),this);
+  actionClose = new QAction (tr("Close"), this);
+  actionClose->setShortcut (QKeySequence::Close);
   iconAction = new QAction (parentWidget()->windowIcon(), tr(""),this);
   iconAction->setVisible (false);
   iconAction->setToolTip (tr("%1 Editor")
@@ -93,7 +96,9 @@ PermEditBox::SetupMenus ()
   fileMenu->addAction (actionSaveAs);
   fileMenu->addAction (actionLoad);
   fileMenu->addAction (actionInsertFile);
-  configMenu->addAction (actionFont);
+  fileMenu->addAction (actionClose);
+  configMenu->addAction (actionFontLocal);
+  configMenu->addAction (actionFontGlobal);
   configMenu->addAction (actionLang);
   topMenu->addAction (iconAction);
   topMenu->addAction (fileMenu->menuAction());
@@ -115,6 +120,12 @@ PermEditBox::SetupIcons ()
   actionLoad->setIcon (QIcon (":/icons/document-open.png"));
   actionInsertFile->setIconVisibleInMenu (true);
   actionInsertFile->setIcon (QIcon (":/icons/insert-text.png"));
+  actionClose->setIconVisibleInMenu (true);
+  actionClose->setIcon (QIcon (":/icons/document-close.png"));
+  actionFontLocal->setIconVisibleInMenu (true);
+  actionFontLocal->setIcon (QIcon (":/icons/font-this.png"));
+  actionFontGlobal->setIconVisibleInMenu (true);
+  actionFontGlobal->setIcon (QIcon (":/icons/font-all.png"));
 }
 
 void
@@ -132,10 +143,14 @@ PermEditBox::Connect ()
            this, SLOT (LoadAction ()));
   connect (actionInsertFile, SIGNAL (triggered()),
            this, SLOT (LoadInsertAction ()));
-  connect (actionFont, SIGNAL (triggered()),
-           this, SLOT (FontAction ()));
+  connect (actionFontLocal, SIGNAL (triggered()),
+           this, SLOT (FontLocalAction ()));
+  connect (actionFontGlobal, SIGNAL (triggered()),
+           this, SLOT (FontGlobalAction ()));
   connect (actionLang, SIGNAL (triggered()),
            this, SLOT (LangAction ()));
+  connect (actionClose, SIGNAL (triggered()),
+           this, SLOT (CloseAction ()));
   connect (iconAction, SIGNAL (triggered()),
            this, SLOT (IconAction ()));
   connect (scin, SIGNAL (cursorPositionChanged (int, int)),
@@ -183,7 +198,7 @@ PermEditBox::TopChanged (bool isTop)
 }
 
 void
-PermEditBox::FontAction ()
+PermEditBox::FontLocalAction ()
 {
   qDebug () << " Font Action called";
   QFont defont; bool ok;
@@ -205,6 +220,11 @@ PermEditBox::FontAction ()
       scin->setFont (newFont);
     }
   } 
+}
+
+void
+PermEditBox::FontGlobalAction ()
+{
 }
 
 void
@@ -236,6 +256,15 @@ PermEditBox::IconAction ()
 {
   qDebug () << " IconAction ";
   setFloating (false);
+}
+
+void
+PermEditBox::CloseAction ()
+{
+  if (scin->isModified()) {
+    AskSave ();
+  }
+  close ();
 }
 
 void

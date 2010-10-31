@@ -15,7 +15,7 @@
    <string>Souffleur Help</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../sched.qrc">
+   <iconset>
     <normaloff>:/souffleur.png</normaloff>:/souffleur.png</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
@@ -26,6 +26,10 @@
        <property name="text">
         <string>Forward</string>
        </property>
+       <property name="icon">
+        <iconset resource="../permute.qrc">
+         <normaloff>:/icons/forward.png</normaloff>:/icons/forward.png</iconset>
+       </property>
       </widget>
      </item>
      <item>
@@ -33,12 +37,20 @@
        <property name="text">
         <string>Back</string>
        </property>
+       <property name="icon">
+        <iconset resource="../permute.qrc">
+         <normaloff>:/icons/back.png</normaloff>:/icons/back.png</iconset>
+       </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="closeButton">
        <property name="text">
         <string>Close</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../permute.qrc">
+         <normaloff>:/icons/document-close.png</normaloff>:/icons/document-close.png</iconset>
        </property>
       </widget>
      </item>
@@ -77,7 +89,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../sched.qrc"/>
+  <include location="../permute.qrc"/>
  </resources>
  <connections/>
 </ui>

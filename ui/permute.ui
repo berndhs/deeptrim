@@ -37,13 +37,20 @@
     </size>
    </property>
    <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0">
+    <item row="1" column="0">
      <widget class="QListWidget" name="titleList">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0">
+     <widget class="QLabel" name="label">
+      <property name="text">
+       <string>Documents</string>
       </property>
      </widget>
     </item>
@@ -67,7 +74,6 @@
     <addaction name="separator"/>
     <addaction name="actionSettings"/>
     <addaction name="separator"/>
-    <addaction name="actionRestart"/>
     <addaction name="actionQuit"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
@@ -93,6 +99,10 @@
    </property>
   </action>
   <action name="actionRestart">
+   <property name="icon">
+    <iconset resource="../permute.qrc">
+     <normaloff>:/icons/restart.png</normaloff>:/icons/restart.png</iconset>
+   </property>
    <property name="text">
     <string>Restart</string>
    </property>
@@ -149,6 +159,10 @@
    </property>
   </action>
   <action name="actionLicense">
+   <property name="icon">
+    <iconset resource="../permute.qrc">
+     <normaloff>:/icons/paragraph.png</normaloff>:/icons/paragraph.png</iconset>
+   </property>
    <property name="text">
     <string>Lincense</string>
    </property>
