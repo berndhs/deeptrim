@@ -12,7 +12,6 @@
 #// but WITHOUT ANY WARRANTY; without even the implied warranty 
 #// of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
 #//
-
 PROJECT_NAME=permute
 EXE_NAME=deeptrim
 PRO_FILE = ${PROJECT_NAME}.pro
@@ -20,9 +19,10 @@ MAKEFILE = Make_${PROJECT_NAME}
 TOP_MAKEFILE = Makefile
 TARGETS = bin/${EXE_NAME}
 DESKTOP_FILE = ${EXE_NAME}.desktop
-DESKTOP_DIR = /usr/share/applications
+SHARE=/usr/share
+DESKTOP_DIR = ${SHARE}/applications
 ICON_FILE = ${EXE_NAME}.png
-ICON_DIR = /usr/share/pixmaps
+ICON_DIR = ${SHARE}/pixmaps
 
 all: $(MAKEFILE)
 	$(MAKE) -f $(MAKEFILE) all

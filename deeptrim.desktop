@@ -1,0 +1,12 @@
+
+[Desktop Entry]
+Name=DeepTrim Text Editor
+GenericName=Text Editor
+Comment=Edit Text Files
+Exec=deeptrim
+Icon=deeptrim
+StartupNotify=false
+Terminal=false
+Type=Application
+Categories=Application;Utility;TextEditor;
+X-Desktop-File-Install-Version=0.16

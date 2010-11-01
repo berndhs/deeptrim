@@ -579,7 +579,7 @@ PermEditBox::LoadFile (const QString & filename)
     QsciLexer * lex (0);
     if (suf.length() > 0) {
       lex = LexerChooser::Ref().NewLexerBySuffix (this,suf.toLower());
-    } else if (info.fileName().toLower () == "makefile") {
+    } else if (info.fileName().toLower ().startsWith("makefile")) {
       lex = LexerChooser::Ref().NewLexerByName (this,"Makefile");
     } else {
       if (bytes.startsWith ('#')) {
