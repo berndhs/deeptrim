@@ -28,6 +28,9 @@
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
      <layout class="QHBoxLayout" name="buttonLayout">
+      <property name="spacing">
+       <number>0</number>
+      </property>
       <item>
        <widget class="QPushButton" name="saveButton">
         <property name="toolTip">
@@ -164,21 +167,7 @@
            <string>Line</string>
           </property>
           <property name="flat">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QPushButton" name="jumpButton">
-          <property name="text">
-           <string>Jump to</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QSpinBox" name="lineValue">
-          <property name="maximum">
-           <number>9999</number>
+           <bool>false</bool>
           </property>
          </widget>
         </item>

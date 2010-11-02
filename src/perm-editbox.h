@@ -33,6 +33,10 @@ class QMenuBar;
 class QMenu;
 class QAction;
 class QLabel;
+class QGridLayout;
+class QGroupBox;
+class QSpinBox;
+class QPushButton;
 
 namespace permute
 {
@@ -100,15 +104,18 @@ protected:
 
   void closeEvent  (QCloseEvent *event);
   bool event (QEvent *ev);
+  void resizeEvent (QResizeEvent *event);
 
 private:
 
+  void SetupCustom ();
   void SetupMenus ();
   void SetupIcons ();
   void SetupShortcuts ();
   void Connect ();
   void TitleChange (const QString & newTitle);
   bool WasEnter ();
+  void MoveJump (const QPoint & bottomRight);
 
   bool              wasModified;
   QString           currentFile;
@@ -138,6 +145,11 @@ private:
   int               jumpOrigin;
   QEvent::Type      lastEventType;
   int               lastKey;
+
+  QGridLayout      *jumpLayout;
+  QWidget          *jump;
+  QSpinBox         *lineValue;
+  QPushButton      *jumpButton;
 
   static int boxCounter;
 };

@@ -36,6 +36,11 @@
 #include <QFileDialog>
 #include <QFontDialog>
 #include <QLabel>
+#include <QGridLayout>
+#include <QGroupBox>
+#include <QSpinBox>
+#include <QPushButton>
+#include <QCursor>
 #include "lexer-chooser.h"
 #include "deliberate.h"
 #include "font-chooser.h"
@@ -62,11 +67,23 @@ qDebug () << " new box with name " << title;
                          .arg(boxCounter));
   setWindowIcon (parentWidget()->windowIcon());
   setupUi (this);
-  HideJump ();
-  gridLayout->removeItem (buttonLayout);
-  gridLayout->removeWidget (scin);
   setWindowTitle (title);
   setWindowIcon (parent->windowIcon());
+  SetupCustom ();
+  Connect ();
+  emit NewPermEditBox (objectName());
+  boxCounter++;
+  normalStyle = Settings().value ("editbox/normalstyle",normalStyle).toString();
+  emphStyle = Settings().value ("editbox/emphstyle",emphStyle).toString();
+  setStyleSheet (QString (" %1 ").arg (normalStyle));
+  TopChanged (isFloating());
+}
+
+void
+PermEditBox::SetupCustom ()
+{
+  gridLayout->removeItem (buttonLayout);
+  gridLayout->removeWidget (scin);
   setTitleBarWidget (0);
   SetupMenus ();
   SetupShortcuts ();
@@ -76,13 +93,44 @@ qDebug () << " new box with name " << title;
   gridLayout->addItem (buttonLayout, 0,1,1,1);
   scin->setObjectName (QString ("Scin-%1").arg (boxCounter));
   gridLayout->addWidget (scin, 1,0,2,2);
-  Connect ();
-  emit NewPermEditBox (objectName());
-  boxCounter++;
-  normalStyle = Settings().value ("editbox/normalstyle",normalStyle).toString();
-  emphStyle = Settings().value ("editbox/emphstyle",emphStyle).toString();
-  setStyleSheet (QString (" %1 ").arg (normalStyle));
-  TopChanged (isFloating());
+
+  jump = new QWidget (this);
+  int jumpHeight = buttonLayout->geometry ().height();
+  int jumpWidth = jumpHeight * 5;
+  jump->resize (jumpWidth,jumpHeight);
+  jump->setObjectName(QString::fromUtf8("jump"));
+  lineValue = new QSpinBox(jump);
+  lineValue->setObjectName(QString::fromUtf8("lineValue"));
+  int len1 = jumpWidth/2;
+  lineValue->setGeometry(QRect(len1, 0, len1+1, jumpHeight));
+  lineValue->setMaximum(9999);
+  jumpButton = new QPushButton(jump);
+  jumpButton->setText (tr("Jump"));
+  jumpButton->setObjectName(QString::fromUtf8("jumpButton"));
+  jumpButton->setGeometry(QRect(0, 0, len1-2, jumpHeight));
+  HideJump ();
+  MoveJump (buttonLayout->geometry().bottomRight());
+}
+
+void
+PermEditBox::MoveJump (const QPoint & topRight)
+{
+  int jumpHeight = buttonLayout->geometry ().height();
+  int jumpWidth = jumpHeight * 5;
+  jump->resize (jumpWidth,jumpHeight);
+  QPoint moveto = topRight;
+  QRect buttonBox = buttonLayout->geometry();
+  QRect jumpBox = jump->geometry ();
+  moveto.ry () += jumpBox.height() ;
+  moveto.rx () -= jumpBox.width ();
+  jump->move (moveto);
+}
+
+void
+PermEditBox::resizeEvent (QResizeEvent *event)
+{
+  MoveJump (buttonLayout->geometry().bottomRight());
+  QDockWidget::resizeEvent (event);
 }
 
 void
@@ -549,13 +597,14 @@ PermEditBox::CursorChange (int line, int col)
 void
 PermEditBox::LineJumpMenu ()
 {
-  if (jumpButton->isVisible()) {
+  if (jump->isVisible()) {
     HideJump ();
     jumpButton->setAutoDefault (false);
   } else {
-    jumpButton->show ();
+qDebug () << " jump is at " << jump->pos();
+    MoveJump (buttonLayout->geometry().bottomRight());
+    jump->show ();
     jumpButton->setAutoDefault (true);
-    lineValue->show ();
     int col;
     scin->getCursorPosition (&jumpOrigin, &col);
     lineValue->setValue (jumpOrigin);
@@ -567,23 +616,19 @@ PermEditBox::LinesChanged ()
 {
   int numlines = scin->lines ();
   lineValue->setMaximum (numlines -1);
-qDebug () << " lines changed to " << numlines;
 }
 
 void
 PermEditBox::JumpLine (bool button)
 {
   int newLine = lineValue->value();
-qDebug () << " maybe jump from " << jumpOrigin << " to " << newLine;
-qDebug () << " button " << button;
   if (button || WasEnter()) {
     if (newLine != jumpOrigin) {
-qDebug () << " jumping";
       int len = scin->lineLength (newLine);
       scin->setSelection (newLine, 0, newLine, len-1);
-      QTimer::singleShot (300, this, SLOT (HideJump()));
     }
   }
+  QTimer::singleShot (300, this, SLOT (HideJump()));
 }
 
 void
@@ -603,15 +648,12 @@ qDebug () << " edit finished ";
 void
 PermEditBox::HideJump ()
 {
-  jumpButton->hide ();
-  lineValue->hide ();
+  jump->hide();
 }
 
 bool
 PermEditBox::WasEnter ()
 {
-qDebug () << " last event " << lastEventType;
-qDebug () << " last key " << lastKey;
   return    (lastEventType == QEvent::ShortcutOverride)
          && (lastKey == int (Qt::Key_Return) 
               || lastKey == int (Qt::Key_Enter));
@@ -724,7 +766,6 @@ PermEditBox::event (QEvent *evt)
     QKeyEvent * kevt = dynamic_cast <QKeyEvent*> (evt);
     if (kevt) {
       lastKey = kevt->key();
-qDebug () << " event type " << lastEventType << " key pressed " << lastKey;
     }
   }   
   return QDockWidget::event (evt);
