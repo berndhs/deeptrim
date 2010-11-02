@@ -94,20 +94,29 @@ PermEditBox::SetupCustom ()
   scin->setObjectName (QString ("Scin-%1").arg (boxCounter));
   gridLayout->addWidget (scin, 1,0,2,2);
 
-  jump = new QWidget (this);
+  jump = new QGroupBox (this);
+  jump->setStyleSheet (
+       " QGroupBox { "
+     "background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,"
+     "                          stop: 0 #707020, stop: 1 #AFAF40);"
+     " border: 1px solid gray;"
+     " border-radius: 5px; "
+     " margin-top:0;"
+     " }"
+       );
+  jump->setAutoFillBackground (true);
   int jumpHeight = buttonLayout->geometry ().height();
   int jumpWidth = jumpHeight * 5;
-  jump->resize (jumpWidth,jumpHeight);
+  jump->resize (jumpWidth + 10,jumpHeight + 10);
   jump->setObjectName(QString::fromUtf8("jump"));
   lineValue = new QSpinBox(jump);
   lineValue->setObjectName(QString::fromUtf8("lineValue"));
   int len1 = jumpWidth/2;
-  lineValue->setGeometry(QRect(len1, 0, len1+1, jumpHeight));
-  lineValue->setMaximum(9999);
+  lineValue->setGeometry(QRect(len1+5, 5, len1+1, jumpHeight));
   jumpButton = new QPushButton(jump);
   jumpButton->setText (tr("Jump"));
   jumpButton->setObjectName(QString::fromUtf8("jumpButton"));
-  jumpButton->setGeometry(QRect(0, 0, len1-2, jumpHeight));
+  jumpButton->setGeometry(QRect(5, 5, len1-2, jumpHeight));
   HideJump ();
   MoveJump (buttonLayout->geometry().bottomRight());
 }
@@ -117,7 +126,7 @@ PermEditBox::MoveJump (const QPoint & topRight)
 {
   int jumpHeight = buttonLayout->geometry ().height();
   int jumpWidth = jumpHeight * 5;
-  jump->resize (jumpWidth,jumpHeight);
+  jump->resize (jumpWidth + 10,jumpHeight + 10);
   QPoint moveto = topRight;
   QRect buttonBox = buttonLayout->geometry();
   QRect jumpBox = jump->geometry ();

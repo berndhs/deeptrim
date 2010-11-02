@@ -147,7 +147,7 @@ private:
   int               lastKey;
 
   QGridLayout      *jumpLayout;
-  QWidget          *jump;
+  QGroupBox          *jump;
   QSpinBox         *lineValue;
   QPushButton      *jumpButton;
 
