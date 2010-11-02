@@ -25,6 +25,7 @@
 #include <QDebug>
 #include <Qsci/qsciscintilla.h>
 #include <QTimer>
+#include <QMessageBox>
 
 namespace permute
 {
@@ -124,10 +125,10 @@ bool
 SearchDialog::FirstSearch ()
 {
   QString expr = ui.needleEdit->text();
-  bool isReg = ui.checkRegular->isChecked ();
-  bool isWrap = ui.checkWrap->isChecked ();
-  bool isWord = ui.checkWord->isChecked ();
-  bool isSense = ui.checkCase->isChecked ();
+  isReg = ui.checkRegular->isChecked ();
+  isWrap = ui.checkWrap->isChecked ();
+  isWord = ui.checkWord->isChecked ();
+  isSense = ui.checkCase->isChecked ();
   isFirst = false;
   return latestScin->findFirst (expr, isReg, isSense, 
                          isWord, isWrap);
@@ -138,6 +139,7 @@ SearchDialog::RunReplace ()
 {
   qDebug () << " Run Replace";
   latestScin->replace (ui.replaceEdit->text());
+  latestScin->findNext ();
 }
 
 void
@@ -145,36 +147,17 @@ SearchDialog::RunReplaceAll ()
 {
   qDebug () << " Run Replace All";
   bool found (true);
+  if (ui.checkWrap->isChecked ()) {
+    latestScin->setCursorPosition (0,0);
+  }
   if (isFirst) {
     found = FirstSearch ();
   }
-  int row, col;
-  latestScin->getCursorPosition (&row, &col);
-  int nextRow (row), nextCol (col);
-  int wrapped (0);
-  while (found && wrapped < 2) {
+  while (found) {
     latestScin->replace (ui.replaceEdit->text());
     found = latestScin->findNext ();
-    if (found) {
-      latestScin->getCursorPosition (&nextRow, &nextCol);
-      if (Less (nextRow, nextCol, row, col)) {
-        wrapped ++;
-      }
-      row = nextRow; col = nextCol;
-    }
   }
 }
 
-bool
-SearchDialog::Less (int x1, int y1, int x2, int y2)
-{
-  if (x1 < x2) {
-    return true;
-  }
-  if (x1 == x2 && y1 < y2) {
-    return true;
-  }
-  return false;
-}
 
 } // namespace

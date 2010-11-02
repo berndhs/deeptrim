@@ -35,6 +35,7 @@
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QFontDialog>
+#include <QLabel>
 #include "lexer-chooser.h"
 #include "deliberate.h"
 #include "font-chooser.h"
@@ -53,7 +54,8 @@ PermEditBox::PermEditBox (const QString & title,
   :QDockWidget (title, parent, flags),
    wasModified (false),
    normalStyle (""),
-   emphStyle ("background-color: lightgreen")
+   emphStyle ("background-color: lightgreen"),
+   specialMessage (0)
 {
 qDebug () << " new box with name " << title;
   QString oldName = objectName();
@@ -61,6 +63,10 @@ qDebug () << " new box with name " << title;
                          .arg(boxCounter));
   setWindowIcon (parentWidget()->windowIcon());
   setupUi (this);
+  specialMessage = new QLabel (this);
+  specialMessage->hide ();
+  jumpButton->hide ();
+  lineValue->hide ();
   gridLayout->removeItem (buttonLayout);
   gridLayout->removeWidget (scin);
   setWindowTitle (title);
@@ -86,6 +92,8 @@ qDebug () << " new box with name " << title;
 void
 PermEditBox::SetupMenus ()
 {
+  lineValue->setMinimum (0);
+  lineValue->setMaximum (0);
   topMenu = new QMenuBar (dockWidgetContents);
   windowMenu = new QMenu (tr(""), topMenu);
   fileMenu = new QMenu (tr("File..."), topMenu);
@@ -218,6 +226,8 @@ PermEditBox::Connect ()
            this, SLOT (CursorChange (int, int)));
   connect (scin, SIGNAL (modificationChanged(bool)),
            this, SLOT (ModifyChanged (bool)));
+  connect (scin, SIGNAL (linesChanged ()),
+           this, SLOT (LinesChanged ()));
   connect (saveButton, SIGNAL (clicked()), this, SLOT (SaveAction()));
   connect (saveAsButton, SIGNAL (clicked()), this, SLOT (SaveAsAction()));
   connect (undoButton, SIGNAL (clicked()), scin, SLOT (undo()));
@@ -226,6 +236,12 @@ PermEditBox::Connect ()
            this, SLOT (DoSearch()));
   connect (replaceButton, SIGNAL (clicked()),
            this, SLOT (DoReplace()));
+  connect (lineButton, SIGNAL (clicked()),
+           this, SLOT (LineJumpMenu()));
+  connect (jumpButton, SIGNAL (clicked()),
+           this, SLOT (JumpLine ()));
+  connect (lineValue, SIGNAL (editingFinished()),
+           this, SLOT (JumpLine ()));
 }
 
 void
@@ -530,19 +546,56 @@ PermEditBox::TextEdit ()
 void
 PermEditBox::CursorChange (int line, int col)
 {
-  linePosLabel->setText (tr("Line %1 Col %2").arg(line).arg(col));
+  lineButton->setText (tr("Line %1 Col %2 ")
+                         .arg(line, 4, 10, QChar (' '))
+                         .arg(col, 3, 10, QChar (' ')));
+  lineValue->setValue (line);
 }
 
 void
-PermEditBox::closeEvent (QCloseEvent *event)
+PermEditBox::LineJumpMenu ()
 {
-  qDebug () << " PermEditBox closed " << event->spontaneous ();
-  qDebug () << "      obj name " << objectName();
-  if (scin->isModified()) {
-    AskSave ();
+  if (jumpButton->isVisible()) {
+    jumpButton->hide ();
+    lineValue->hide ();
+    specialMessage->hide ();
+    jumpButton->setAutoDefault (false);
+  } else {
+    jumpButton->show ();
+    jumpButton->setAutoDefault (true);
+    lineValue->show ();
+    int col;
+    scin->getCursorPosition (&jumpOrigin, &col);
+    lineValue->setValue (jumpOrigin);
+    specialMessage->setText ("Special Message about lines");
+    specialMessage->move (searchButton->pos ());
+    specialMessage->show ();
   }
-  emit TitleGone (this);
-  QDockWidget::closeEvent (event);
+}
+
+void
+PermEditBox::LinesChanged ()
+{
+  lineValue->setMaximum (scin->lines () -1);
+}
+
+void
+PermEditBox::JumpLine ()
+{
+  int newLine = lineValue->value();
+  jumpButton->hide ();
+  lineValue->hide ();
+  specialMessage->hide ();
+
+  if ((lastEventType == QEvent::KeyRelease 
+        || lastEventType == QEvent::KeyPress)
+      && (lastKey == int (Qt::Key_Return) 
+          || lastKey == int (Qt::Key_Enter))) {
+    
+    if (newLine != jumpOrigin) {
+      scin->setCursorPosition (newLine, 0);
+    }
+  }
 }
 
 QString
@@ -630,6 +683,34 @@ QString
 PermEditBox::FileName ()
 {
   return currentFile;
+}
+
+void
+PermEditBox::closeEvent (QCloseEvent *event)
+{
+  qDebug () << " PermEditBox closed " << event->spontaneous ();
+  qDebug () << "      obj name " << objectName();
+  if (scin->isModified()) {
+    AskSave ();
+  }
+  emit TitleGone (this);
+  QDockWidget::closeEvent (event);
+}
+
+bool
+PermEditBox::event (QEvent *evt)
+{
+  lastEventType = evt->type();
+  if (lastEventType == QEvent::KeyRelease 
+     || lastEventType == QEvent::KeyPress) {
+    QKeyEvent * kevt = dynamic_cast <QKeyEvent*> (evt);
+qDebug () << " event type " << lastEventType << " event " << kevt;
+    if (kevt) {
+      lastKey = kevt->key();
+qDebug () << " key pressed " << lastKey;
+    }
+  }   
+  return QDockWidget::event (evt);
 }
 
 } // namespace

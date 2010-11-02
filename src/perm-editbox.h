@@ -25,12 +25,14 @@
 #include <QDockWidget>
 #include <Qsci/qsciscintilla.h>
 #include <QFont>
+#include <QEvent>
 #include "ui_edit-box.h"
 
 class QResizeEvent;
 class QMenuBar;
 class QMenu;
 class QAction;
+class QLabel;
 
 namespace permute
 {
@@ -81,6 +83,9 @@ private slots:
   void CloseAction ();
   void AskSave ();
   void CursorChange (int line, int col);
+  void LineJumpMenu ();
+  void JumpLine ();
+  void LinesChanged ();
 
 signals:
 
@@ -91,6 +96,7 @@ signals:
 protected:
 
   void closeEvent  (QCloseEvent *event);
+  bool event (QEvent *ev);
 
 private:
 
@@ -125,6 +131,10 @@ private:
 
   QString           normalStyle;
   QString           emphStyle;
+  int               jumpOrigin;
+  QEvent::Type      lastEventType;
+  int               lastKey;
+  QLabel           *specialMessage;
 
   static int boxCounter;
 };

@@ -60,14 +60,16 @@ private:
 
   void Connect ();
 
-  bool Less (int x1, int y1, int x2, int y2);
-
   static SearchDialog * theOnly;
 
   friend class Permute;
 
   Ui_SearchDialog    ui;
 
+  bool    isReg;
+  bool    isWrap;
+  bool    isWord;
+  bool    isSense;
   bool    isFirst;
   QsciScintilla  * latestScin;
 
