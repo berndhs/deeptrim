@@ -84,8 +84,11 @@ private slots:
   void AskSave ();
   void CursorChange (int line, int col);
   void LineJumpMenu ();
-  void JumpLine ();
+  void JumpClicked ();
+  void JumpLine (bool button=false);
   void LinesChanged ();
+  void SpinEditFinished ();
+  void HideJump ();
 
 signals:
 
@@ -105,6 +108,7 @@ private:
   void SetupShortcuts ();
   void Connect ();
   void TitleChange (const QString & newTitle);
+  bool WasEnter ();
 
   bool              wasModified;
   QString           currentFile;
@@ -134,7 +138,6 @@ private:
   int               jumpOrigin;
   QEvent::Type      lastEventType;
   int               lastKey;
-  QLabel           *specialMessage;
 
   static int boxCounter;
 };

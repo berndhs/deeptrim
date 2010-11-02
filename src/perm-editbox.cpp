@@ -54,8 +54,7 @@ PermEditBox::PermEditBox (const QString & title,
   :QDockWidget (title, parent, flags),
    wasModified (false),
    normalStyle (""),
-   emphStyle ("background-color: lightgreen"),
-   specialMessage (0)
+   emphStyle ("background-color: lightgreen")
 {
 qDebug () << " new box with name " << title;
   QString oldName = objectName();
@@ -63,10 +62,7 @@ qDebug () << " new box with name " << title;
                          .arg(boxCounter));
   setWindowIcon (parentWidget()->windowIcon());
   setupUi (this);
-  specialMessage = new QLabel (this);
-  specialMessage->hide ();
-  jumpButton->hide ();
-  lineValue->hide ();
+  HideJump ();
   gridLayout->removeItem (buttonLayout);
   gridLayout->removeWidget (scin);
   setWindowTitle (title);
@@ -92,8 +88,6 @@ qDebug () << " new box with name " << title;
 void
 PermEditBox::SetupMenus ()
 {
-  lineValue->setMinimum (0);
-  lineValue->setMaximum (0);
   topMenu = new QMenuBar (dockWidgetContents);
   windowMenu = new QMenu (tr(""), topMenu);
   fileMenu = new QMenu (tr("File..."), topMenu);
@@ -238,10 +232,10 @@ PermEditBox::Connect ()
            this, SLOT (DoReplace()));
   connect (lineButton, SIGNAL (clicked()),
            this, SLOT (LineJumpMenu()));
-  connect (jumpButton, SIGNAL (clicked()),
-           this, SLOT (JumpLine ()));
   connect (lineValue, SIGNAL (editingFinished()),
-           this, SLOT (JumpLine ()));
+           this, SLOT (SpinEditFinished ()));
+  connect (jumpButton, SIGNAL (clicked()),
+           this, SLOT (JumpClicked ()));
 }
 
 void
@@ -556,9 +550,7 @@ void
 PermEditBox::LineJumpMenu ()
 {
   if (jumpButton->isVisible()) {
-    jumpButton->hide ();
-    lineValue->hide ();
-    specialMessage->hide ();
+    HideJump ();
     jumpButton->setAutoDefault (false);
   } else {
     jumpButton->show ();
@@ -567,35 +559,62 @@ PermEditBox::LineJumpMenu ()
     int col;
     scin->getCursorPosition (&jumpOrigin, &col);
     lineValue->setValue (jumpOrigin);
-    specialMessage->setText ("Special Message about lines");
-    specialMessage->move (searchButton->pos ());
-    specialMessage->show ();
   }
 }
 
 void
 PermEditBox::LinesChanged ()
 {
-  lineValue->setMaximum (scin->lines () -1);
+  int numlines = scin->lines ();
+  lineValue->setMaximum (numlines -1);
+qDebug () << " lines changed to " << numlines;
 }
 
 void
-PermEditBox::JumpLine ()
+PermEditBox::JumpLine (bool button)
 {
   int newLine = lineValue->value();
-  jumpButton->hide ();
-  lineValue->hide ();
-  specialMessage->hide ();
-
-  if ((lastEventType == QEvent::KeyRelease 
-        || lastEventType == QEvent::KeyPress)
-      && (lastKey == int (Qt::Key_Return) 
-          || lastKey == int (Qt::Key_Enter))) {
-    
+qDebug () << " maybe jump from " << jumpOrigin << " to " << newLine;
+qDebug () << " button " << button;
+  if (button || WasEnter()) {
     if (newLine != jumpOrigin) {
-      scin->setCursorPosition (newLine, 0);
+qDebug () << " jumping";
+      int len = scin->lineLength (newLine);
+      scin->setSelection (newLine, 0, newLine, len-1);
+      QTimer::singleShot (300, this, SLOT (HideJump()));
     }
   }
+}
+
+void
+PermEditBox::JumpClicked ()
+{
+qDebug () << " clicked jump";
+  JumpLine (true);
+}
+
+void
+PermEditBox::SpinEditFinished ()
+{
+qDebug () << " edit finished ";
+  JumpLine (false);
+}
+
+void
+PermEditBox::HideJump ()
+{
+  jumpButton->hide ();
+  lineValue->hide ();
+}
+
+bool
+PermEditBox::WasEnter ()
+{
+qDebug () << " last event " << lastEventType;
+qDebug () << " last key " << lastKey;
+  return    (lastEventType == QEvent::ShortcutOverride)
+         && (lastKey == int (Qt::Key_Return) 
+              || lastKey == int (Qt::Key_Enter));
 }
 
 QString
@@ -701,13 +720,11 @@ bool
 PermEditBox::event (QEvent *evt)
 {
   lastEventType = evt->type();
-  if (lastEventType == QEvent::KeyRelease 
-     || lastEventType == QEvent::KeyPress) {
+  if (lastEventType == QEvent::ShortcutOverride) {
     QKeyEvent * kevt = dynamic_cast <QKeyEvent*> (evt);
-qDebug () << " event type " << lastEventType << " event " << kevt;
     if (kevt) {
       lastKey = kevt->key();
-qDebug () << " key pressed " << lastKey;
+qDebug () << " event type " << lastEventType << " key pressed " << lastKey;
     }
   }   
   return QDockWidget::event (evt);
