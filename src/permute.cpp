@@ -69,6 +69,9 @@ Permute::Permute (QWidget *parent)
                  | QMainWindow::ForceTabbedDocks 
                  );
   setDockNestingEnabled (false);
+  normalSpacerSize = ui.rightSpace->sizeHint ();
+  smallSpacerSize = normalSpacerSize;
+  smallSpacerSize.setWidth (1);
   hiddenBox = new PermEditBox (tr("HiddenRight"), this);
   QMainWindow::addDockWidget (Qt::RightDockWidgetArea, hiddenBox);
   hiddenBox->hide ();
@@ -128,6 +131,22 @@ Permute::Init (QApplication & pa)
 }
 
 void
+Permute::AdjustSpace ()
+{
+  if (titleItems.size() < 1) {
+    ui.rightSpace->changeSize (smallSpacerSize.width (),
+                               smallSpacerSize.height (),
+                               QSizePolicy::Fixed,
+                               QSizePolicy::Minimum);
+  } else {
+    ui.rightSpace->changeSize (smallSpacerSize.width (),
+                               smallSpacerSize.height (),
+                               QSizePolicy::Expanding,
+                               QSizePolicy::Minimum);
+  }
+}
+
+void
 Permute::ListChildren (QObject *parent, int prefixLen)
 {
   QObjectList kids = parent->children ();
@@ -177,14 +196,13 @@ Permute::Run ()
   restoreState (Settings().value ("states/mainstate").toByteArray());
   show ();
   Settings().sync ();
-  if (args.size() == 0) {
-    NewFile ();
-  } else {
+  if (args.size() > 0) {
     QStringList::iterator sit;
     for (sit = args.begin(); sit != args.end(); sit++) {
       OpenFile (*sit);
     }
   }
+  AdjustSpace ();
 }
 
 void
@@ -292,6 +310,7 @@ Permute::OpenFile (const QString & filename)
   } else {
     delete newEdit;
   }
+  AdjustSpace ();
 }
 
 void
@@ -326,6 +345,7 @@ Permute::NewFile ()
   connect (newEdit, SIGNAL (TitleGone (PermEditBox *)),
                this, SLOT (RemoveTag (PermEditBox *)));
   AddDockWidget (Qt::RightDockWidgetArea, newEdit);
+  AdjustSpace ();
 }
 
 void
@@ -374,6 +394,7 @@ Permute::RemoveTag (PermEditBox *box)
       emphedBox = 0;
     }
     delete item;
+    AdjustSpace ();
   }
 }
 

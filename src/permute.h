@@ -88,6 +88,7 @@ private slots:
 private:
 
   void  Connect ();
+  void  AdjustSpace ();
   void  CloseCleanup ();
   void  OpenFile (const QString & filename);
   void  AddDockWidget ( Qt::DockWidgetArea area, 
@@ -116,6 +117,8 @@ private:
   QMap <QListWidgetItem *, PermEditBox *>  titleBoxes;
   
   PermEditBox   *emphedBox;
+  QSize          normalSpacerSize;
+  QSize          smallSpacerSize;
 
 };
 
