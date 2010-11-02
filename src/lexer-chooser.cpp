@@ -149,6 +149,8 @@ LexerChooser::InitDefaultSuffixes ()
   newBySuffix ["cxx"] = LexerChooser::NewLexerCPP;
   newBySuffix ["cc"] = LexerChooser::NewLexerCPP;
   newBySuffix ["c"] = LexerChooser::NewLexerCPP;
+  newBySuffix ["desktop"] = LexerChooser::NewLexerProperties;
+  newBySuffix ["ini"] = LexerChooser::NewLexerProperties;
   newBySuffix ["h"] = LexerChooser::NewLexerCPP;
   newBySuffix ["hh"] = LexerChooser::NewLexerCPP;
   newBySuffix ["hpp"] = LexerChooser::NewLexerCPP;
