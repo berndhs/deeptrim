@@ -163,7 +163,11 @@
           </widget>
          </item>
          <item>
-          <widget class="QSpinBox" name="lineValue"/>
+          <widget class="QSpinBox" name="lineValue">
+           <property name="buttonSymbols">
+            <enum>QAbstractSpinBox::PlusMinus</enum>
+           </property>
+          </widget>
          </item>
          <item>
           <widget class="QPushButton" name="stayButton">
@@ -188,9 +192,6 @@
      </widget>
     </item>
    </layout>
-   <zorder>scin</zorder>
-   <zorder>jump</zorder>
-   <zorder>layoutWidget</zorder>
   </widget>
  </widget>
  <layoutdefault spacing="1" margin="1"/>
