@@ -31,7 +31,14 @@ TEMPLATE = app
 QT += core gui sql webkit network xml 
 CONFIG += debug_and_release
 
-LIBS         += -lqscintilla2
+
+unix: {
+  LIBS         += -lqscintilla2
+}
+win32: {
+  INCLUDEPATH += ../qscintilla/Qt4/
+  LIBS         += -L../qscintilla/Qt4/release -lqscintilla2
+}
 MAKEFILE = Make_$${MYNAME}
 
 CONFIG(debug, debug|release) {
