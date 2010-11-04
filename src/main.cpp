@@ -62,15 +62,15 @@ main (int argc, char *argv[])
     opts.Usage ();
     exit (0);
   }
-  pv.CLIVersion ();
   configMessages.append (QObject::tr("Build with Qt %1").arg(QT_VERSION_STR));
   configMessages.append (QObject::tr("Running with Qt %1").arg(qVersion()));
   configMessages.append (QObject::tr("Using QScintilla %1")
                             .arg(QSCINTILLA_VERSION_STR));
-  for (int cm=0; cm<configMessages.size(); cm++) {
-    deliberate::StdOut () << configMessages[cm] << endl;
-  }
   if (opts.WantVersion ()) {
+    pv.CLIVersion ();
+    for (int cm=0; cm<configMessages.size(); cm++) {
+      deliberate::StdOut () << configMessages[cm] << endl;
+    }
     exit (0);
   }
   bool showDebug = opts.SeenOpt ("debug");
