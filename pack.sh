@@ -2,7 +2,9 @@
 
 EXE_NAME=deeptrim
 PROJ_NAME=permute
-VERSION=0.0.5
+VERSION=`grep "ProgramVersion::VersionNumber" src/version.cpp \
+        | awk '{print $3;}' \
+        | sed s/[\(\"\;\)]//g`
 PACKDIR=${HOME}/packaging/${PROJ_NAME}
 
 makearchive.sh ${EXE_NAME}-${VERSION} master
