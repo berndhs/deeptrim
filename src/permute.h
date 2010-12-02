@@ -92,9 +92,9 @@ private:
   void  CloseCleanup ();
   void  OpenFile (const QString & filename);
   void  AddDockWidget ( Qt::DockWidgetArea area, 
-                        QDockWidget * dockwidget );
+                        QDockWidget * dockWidget );
   void  AddDockWidget ( Qt::DockWidgetArea area, 
-                        QDockWidget * dockwidget, 
+                        QDockWidget * dockWidget, 
                         Qt::Orientation orientation );
   void  ListChildren (QObject * parent, int prefixLen = 1);
 

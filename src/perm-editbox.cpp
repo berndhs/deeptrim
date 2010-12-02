@@ -93,31 +93,6 @@ PermEditBox::SetupCustom ()
   gridLayout->addItem (buttonLayout, 0,1,1,1);
   scin->setObjectName (QString ("Scin-%1").arg (boxCounter));
   gridLayout->addWidget (scin, 1,0,2,2);
-#if 0
-  jump = new QGroupBox (this);
-  jump->setStyleSheet (
-       " QGroupBox { "
-     "background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,"
-     "                          stop: 0 #707020, stop: 1 #AFAF40);"
-     " border: 1px solid gray;"
-     " border-radius: 5px; "
-     " margin-top:0;"
-     " }"
-       );
-  jump->setAutoFillBackground (true);
-  int jumpHeight = buttonLayout->geometry ().height();
-  int jumpWidth = jumpHeight * 5;
-  jump->resize (jumpWidth + 10,jumpHeight + 10);
-  jump->setObjectName(QString::fromUtf8("jump"));
-  lineValue = new QSpinBox(jump);
-  lineValue->setObjectName(QString::fromUtf8("lineValue"));
-  int len1 = jumpWidth/2;
-  lineValue->setGeometry(QRect(len1+5, 5, len1+1, jumpHeight));
-  jumpButton = new QPushButton(jump);
-  jumpButton->setText (tr("Jump"));
-  jumpButton->setObjectName(QString::fromUtf8("jumpButton"));
-  jumpButton->setGeometry(QRect(5, 5, len1-2, jumpHeight));
-#endif
   HideJump ();
   MoveJump (buttonLayout->geometry().bottomRight());
 }

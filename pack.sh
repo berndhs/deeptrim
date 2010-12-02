@@ -2,7 +2,7 @@
 
 EXE_NAME=deeptrim
 PROJ_NAME=permute
-VERSION=0.0.4
+VERSION=0.0.5
 PACKDIR=${HOME}/packaging/${PROJ_NAME}
 
 makearchive.sh ${EXE_NAME}-${VERSION} master

@@ -315,24 +315,26 @@ Permute::OpenFile (const QString & filename)
 
 void
 Permute::AddDockWidget ( Qt::DockWidgetArea area, 
-                        QDockWidget * dockwidget )
+                        QDockWidget * dockWidget )
 {
-qDebug () << " add dock widget " << dockwidget << " in area " << area;
-  QMainWindow::addDockWidget (area, dockwidget);
-  tabifyDockWidget (hiddenBox, dockwidget);
-  dockwidget->setFocus ();
+qDebug () << " add dock widget " << dockWidget << " in area " << area;
+  QMainWindow::addDockWidget (area, dockWidget);
+  tabifyDockWidget (hiddenBox, dockWidget);
+  dockWidget->setFocus ();
+  QTimer::singleShot (150, dockWidget, SLOT (raise()));
 }
 
 void
 Permute::AddDockWidget ( Qt::DockWidgetArea area, 
-                        QDockWidget * dockwidget, 
+                        QDockWidget * dockWidget, 
                         Qt::Orientation orientation )
 {
-qDebug () << " add dock widget " << dockwidget << " in area " << area 
+qDebug () << " add dock widget " << dockWidget << " in area " << area 
           << " oriented " << orientation;
-  QMainWindow::addDockWidget (area, dockwidget, orientation);
-  tabifyDockWidget (hiddenBox, dockwidget);
-  dockwidget->setFocus ();
+  QMainWindow::addDockWidget (area, dockWidget, orientation);
+  tabifyDockWidget (hiddenBox, dockWidget);
+  dockWidget->setFocus ();
+  QTimer::singleShot (150, dockWidget, SLOT (raise()));
 }
 
 void
