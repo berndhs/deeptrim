@@ -58,6 +58,7 @@ public:
   void Init (QApplication & app);
   void AddConfigMessages (const QStringList & msgs);
   void CommandArgs (const QStringList & args);
+  void OpenFile (const QString & filename);
 
   void Run ();
 
@@ -90,7 +91,6 @@ private:
   void  Connect ();
   void  AdjustSpace ();
   void  CloseCleanup ();
-  void  OpenFile (const QString & filename);
   void  AddDockWidget ( Qt::DockWidgetArea area, 
                         QDockWidget * dockWidget );
   void  AddDockWidget ( Qt::DockWidgetArea area, 

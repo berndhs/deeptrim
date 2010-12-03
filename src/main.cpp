@@ -28,7 +28,7 @@
 #include "deliberate.h"
 #include "version.h"
 #include "cmdoptions.h"
-#include "permute.h"
+#include "starter.h"
 
 
 int
@@ -86,15 +86,8 @@ main (int argc, char *argv[])
     deliberate::StartFileLog (logfile);
   }
 #endif
-  
-  permute::Permute   permute;
-  permute.setWindowTitle ("DeepTrim");
-  app.setWindowIcon (permute.windowIcon());
-  permute.Init (app);
-  permute.AddConfigMessages (configMessages);
-  permute.CommandArgs (opts.Arguments());
-
-  permute.Run ();
+  permute::PermuteStarter Starter (app, configMessages, opts.Arguments());
+  Starter.Run ();
   result = app.exec ();
   qDebug () << " QApplication exec finished " << result;
   return result;

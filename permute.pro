@@ -28,7 +28,7 @@ EXENAME = deeptrim
 
 TEMPLATE = app
 
-QT += core gui sql webkit network xml 
+QT += core gui sql webkit network xml dbus
 CONFIG += debug_and_release
 
 
@@ -90,6 +90,10 @@ HEADERS = \
           src/font-chooser.h \
           src/pick-string.h \
           src/search-dialog.h \
+          src/ipc-server.h \
+          src/starter.h \
+          src/ipc_adapt.h \
+          src/ipc_proxy.h \
 
 
 SOURCES = \
@@ -106,4 +110,8 @@ SOURCES = \
           src/font-chooser.cpp \
           src/pick-string.cpp \
           src/search-dialog.cpp \
+          src/ipc-server.cpp \
+          src/starter.cpp \
+          src/ipc_adapt.cpp \
+          src/ipc_proxy.cpp \
 
