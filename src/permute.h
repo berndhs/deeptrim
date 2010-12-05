@@ -24,7 +24,7 @@
 #include <QMainWindow>
 #include <QApplication>
 #include <QStringList>
-#include <QList>
+#include <QList> 
 
 #include <QMap>
 

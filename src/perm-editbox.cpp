@@ -28,6 +28,7 @@
 #include <QFileInfo>
 #include <QResizeEvent>
 #include <QAction>
+#include <QShortcut>
 #include <QMenuBar>
 #include <QFontComboBox>
 #include <QDebug>
@@ -109,13 +110,6 @@ PermEditBox::MoveJump (const QPoint & topRight)
   moveto.ry () += jumpBox.height() ;
   moveto.rx () -= jumpBox.width ();
   jump->move (moveto);
-}
-
-void
-PermEditBox::resizeEvent (QResizeEvent *event)
-{
-  MoveJump (buttonLayout->geometry().bottomRight());
-  QDockWidget::resizeEvent (event);
 }
 
 void
@@ -209,6 +203,8 @@ void
 PermEditBox::SetupShortcuts ()
 {
   actionSave->setShortcut (QKeySequence::Save);
+
+  qDebug () << " shortcut context for Save " << actionSave->shortcutContext();
   actionSaveAs->setShortcut (QKeySequence::SaveAs);
   actionLoad->setShortcut (QKeySequence::Open);
   actionClose->setShortcut (QKeySequence::Close);
@@ -574,9 +570,9 @@ void
 PermEditBox::CursorChange (int line, int col)
 {
   lineButton->setText (tr("Line %1 Col %2 ")
-                         .arg(line, 4, 10, QChar (' '))
+                         .arg(line+1, 4, 10, QChar (' '))
                          .arg(col, 3, 10, QChar (' ')));
-  lineValue->setValue (line);
+  lineValue->setValue (line+1);
 }
 
 void
@@ -590,7 +586,7 @@ PermEditBox::LineJumpMenu ()
     jumpButton->setAutoDefault (true);
     int col;
     scin->getCursorPosition (&jumpOrigin, &col);
-    lineValue->setValue (jumpOrigin);
+    lineValue->setValue (jumpOrigin+1);
   }
 }
 
@@ -598,13 +594,13 @@ void
 PermEditBox::LinesChanged ()
 {
   int numlines = scin->lines ();
-  lineValue->setMaximum (numlines -1);
+  lineValue->setMaximum (numlines);
 }
 
 void
 PermEditBox::JumpLine (bool button)
 {
-  int newLine = lineValue->value();
+  int newLine = lineValue->value() -1;
   if (button) {
     if (newLine != jumpOrigin) {
       int len = scin->lineLength (newLine);
@@ -732,6 +728,13 @@ PermEditBox::closeEvent (QCloseEvent *event)
   }
   emit TitleGone (this);
   QDockWidget::closeEvent (event);
+}
+
+void
+PermEditBox::resizeEvent (QResizeEvent *event)
+{
+  MoveJump (buttonLayout->geometry().bottomRight());
+  QDockWidget::resizeEvent (event);
 }
 
 } // namespace

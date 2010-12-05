@@ -28,7 +28,7 @@
  
 namespace deliberate {
 
-  QString ProgramVersion::VersionNumber ("0.0.5");
+  QString ProgramVersion::VersionNumber ("0.0.6");
 
   QString ProgramVersion::ProgramName("DeepTrim");
   QString ProgramVersion::copyright ("Copyright (C) 2010 Bernd Stramm");

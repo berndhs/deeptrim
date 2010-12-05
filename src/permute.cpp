@@ -28,7 +28,7 @@
 #include "perm-editbox.h"
 #include <QMessageBox>
 #include <QTimer>
-#include <QFile>
+#include <QFile>  
 #include <QFileDialog>
 #include <QDomDocument>
 #include <QDomElement>
@@ -367,7 +367,6 @@ Permute::License ()
 void
 Permute::NewTag (QString tag, PermEditBox * box)
 {
-  qDebug () << " new tag " << tag;
   QListWidgetItem *item (0);
   if (titleItems.contains (box)) {
     item = titleItems [box];
@@ -384,7 +383,6 @@ Permute::NewTag (QString tag, PermEditBox * box)
 void
 Permute::RemoveTag (PermEditBox *box)
 {
-  qDebug () << " remove tag " << box->Title();
   if (titleItems.contains (box)) {
     QListWidgetItem * item = titleItems [box];
     int row = ui.titleList->row (item);

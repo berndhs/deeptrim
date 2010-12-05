@@ -31,7 +31,8 @@
 class QResizeEvent;
 class QMenuBar;
 class QMenu;
-class QAction;
+class QAction; 
+class QShortcut;
 class QLabel;
 
 namespace permute
