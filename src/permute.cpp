@@ -307,7 +307,6 @@ Permute::OpenFile (const QString & filename)
     qDebug () << " new Edit stylesheet " << newEdit->styleSheet ();
     newEdit->raise ();
     newEdit->setFocus ();
-    editors.insert (newEdit);
   } else {
     delete newEdit;
   }
@@ -348,7 +347,6 @@ Permute::NewFile ()
   connect (newEdit, SIGNAL (TitleGone (PermEditBox *)),
                this, SLOT (RemoveTag (PermEditBox *)));
   AddDockWidget (Qt::RightDockWidgetArea, newEdit);
-  editors.insert (newEdit);
   AdjustSpace ();
 }
 
@@ -416,28 +414,6 @@ Permute::TitleItemClicked (QListWidgetItem *item)
       emphedBox->SetEmphasis (true);
     }
   }
-}
-
-bool
-Permute::event (QEvent *evt)
-{
-  if (evt->type() == QEvent::ShortcutOverride) {
-    QKeyEvent * kevt = static_cast <QKeyEvent*> (evt);
-    if (kevt->matches (QKeySequence::Save) ||
-        kevt->matches (QKeySequence::SaveAs) ||
-        kevt->matches (QKeySequence::Open) ||
-        kevt->matches (QKeySequence::Find) ||
-        kevt->matches (QKeySequence::Replace)) {  
-      QSet <PermEditBox*>::iterator sit;
-      for (sit=editors.begin(); sit != editors.end(); sit++) {
-        if ((*sit)->TextEdit()->hasFocus()) {
-          (*sit)->SpecialKeyEvent (kevt);
-          return true;
-        }
-      }
-    }
-  }
-  return QMainWindow::event (evt);
 }
 
 } // namespace

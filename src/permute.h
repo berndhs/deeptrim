@@ -33,7 +33,7 @@
 #include "config-edit.h"
 #include "deliberate.h"
 #include "helpview.h"
-#include "search-dialog.h"
+#include "search-dialog.h" 
 
 class QListWidgetItem;
 class QCloseEvent;
@@ -68,7 +68,6 @@ public:
 protected:
 
   void closeEvent (QCloseEvent * event);
-  bool event (QEvent *evt);
 
 public slots:
 
@@ -121,8 +120,6 @@ private:
   PermEditBox   *emphedBox;
   QSize          normalSpacerSize;
   QSize          smallSpacerSize;
-
-  QSet <PermEditBox*>  editors;
 
 };
 

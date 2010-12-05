@@ -34,10 +34,14 @@ class QMenuBar;
 class QMenu;
 class QAction; 
 class QShortcut;
-class QLabel;
-
+class QLabel; 
+ 
 namespace permute
 {
+
+class EditKeyFilter;
+class SpinEventFilter;
+
 class PermEditBox : public QDockWidget, public Ui_EditBox
 {
 Q_OBJECT
@@ -67,6 +71,8 @@ public slots:
   void SetTitle (QString newTitle);
   void DoSearch ();
   void DoReplace ();
+  void JumpClicked ();
+  void HideJump ();
 
 private slots:
 
@@ -87,10 +93,8 @@ private slots:
   void AskSave ();
   void CursorChange (int line, int col);
   void LineJumpMenu ();
-  void JumpClicked ();
   void JumpLine (bool button=false);
   void LinesChanged ();
-  void HideJump ();
   void ShowJump ();
 
 signals:
@@ -140,6 +144,9 @@ private:
   QString           normalStyle;
   QString           emphStyle;
   int               jumpOrigin;
+
+  EditKeyFilter    *scinFilter;
+  SpinEventFilter  *spinFilter;
 
 
   static int boxCounter;

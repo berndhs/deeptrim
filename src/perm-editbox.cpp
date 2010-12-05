@@ -37,7 +37,8 @@
 #include <QFileDialog>
 #include <QFontDialog>
 #include <QLabel>
-#include <QGridLayout>
+#include <QGridLayout> 
+#include <QGridLayout> 
 #include <QGroupBox>
 #include <QSpinBox>
 #include <QPushButton>
@@ -46,7 +47,9 @@
 #include "deliberate.h"
 #include "font-chooser.h"
 #include "search-dialog.h"
-
+#include "edit-key-filter.h"
+#include "spin-event-filter.h"
+ 
 using namespace deliberate;
 
 namespace permute
@@ -60,7 +63,8 @@ PermEditBox::PermEditBox (const QString & title,
   :QDockWidget (title, parent, flags),
    wasModified (false),
    normalStyle (""),
-   emphStyle ("background-color: lightgreen")
+   emphStyle ("background-color: lightgreen"),
+   scinFilter (0)
 {
 qDebug () << " new box with name " << title;
   QString oldName = objectName();
@@ -72,6 +76,10 @@ qDebug () << " new box with name " << title;
   setWindowIcon (parent->windowIcon());
   SetupCustom ();
   Connect ();
+  scinFilter = new EditKeyFilter (this, this);
+  scin->installEventFilter (scinFilter);
+  spinFilter = new SpinEventFilter (this, this);
+  lineValue->installEventFilter (spinFilter);
   emit NewPermEditBox (objectName());
   boxCounter++;
   normalStyle = Settings().value ("editbox/normalstyle",normalStyle).toString();
@@ -481,7 +489,9 @@ PermEditBox::LoadInsertAction ()
 void
 PermEditBox::SaveAction ()
 {
-  qDebug () << "Save Action called";
+  qDebug () << "Save Action called"
+            << objectName()
+            << " file " << currentFile;
   if (currentFile.length() < 1) {
     SaveAsAction ();
   } else {

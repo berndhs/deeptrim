@@ -94,6 +94,8 @@ HEADERS = \
           src/starter.h \
           src/ipc_adapt.h \
           src/ipc_proxy.h \
+          src/edit-key-filter.h \
+          src/spin-event-filter.h \
 
 
 SOURCES = \
@@ -114,4 +116,6 @@ SOURCES = \
           src/starter.cpp \
           src/ipc_adapt.cpp \
           src/ipc_proxy.cpp \
+          src/edit-key-filter.cpp \
+          src/spin-event-filter.cpp \
 
