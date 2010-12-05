@@ -25,6 +25,7 @@
 #include <QApplication>
 #include <QStringList>
 #include <QList> 
+#include <QEvent>
 
 #include <QMap>
 
@@ -67,6 +68,7 @@ public:
 protected:
 
   void closeEvent (QCloseEvent * event);
+  bool event (QEvent *evt);
 
 public slots:
 
@@ -119,6 +121,8 @@ private:
   PermEditBox   *emphedBox;
   QSize          normalSpacerSize;
   QSize          smallSpacerSize;
+
+  QSet <PermEditBox*>  editors;
 
 };
 

@@ -26,9 +26,10 @@
 #include <Qsci/qsciscintilla.h>
 #include <QFont>
 #include <QEvent>
+#include <QKeyEvent>
 #include "ui_edit-box.h"
 
-class QResizeEvent;
+class QResizeEvent; 
 class QMenuBar;
 class QMenu;
 class QAction; 
@@ -50,7 +51,7 @@ public:
   void SetDefaultFont (const QFont & font, bool setNow=false);
   void SetText (const QString & text);
   QString Text ();
-  QsciScintilla & TextEdit ();
+  QsciScintilla * TextEdit ();
 
   void Clear ();
   bool LoadFile (const QString & filename);
@@ -59,6 +60,7 @@ public:
   QString Title ();
  
   void SetEmphasis (bool high=true);
+  void SpecialKeyEvent (QKeyEvent * kevt);
 
 public slots:
 

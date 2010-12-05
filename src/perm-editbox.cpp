@@ -560,10 +560,10 @@ PermEditBox::Title ()
   return windowTitle();
 }
 
-QsciScintilla &
+QsciScintilla *
 PermEditBox::TextEdit ()
 {
-  return *scin;
+  return scin;
 }
 
 void
@@ -735,6 +735,22 @@ PermEditBox::resizeEvent (QResizeEvent *event)
 {
   MoveJump (buttonLayout->geometry().bottomRight());
   QDockWidget::resizeEvent (event);
+}
+
+void
+PermEditBox::SpecialKeyEvent (QKeyEvent * kevt)
+{
+  if (kevt->matches (QKeySequence::Save)) {
+    SaveAction ();
+  } else if (kevt->matches (QKeySequence::SaveAs)) {
+    SaveAsAction ();
+  } else if (kevt->matches (QKeySequence::Open)) {
+    LoadAction ();
+  } else if (kevt->matches (QKeySequence::Find)) {
+    DoSearch ();
+  } else if (kevt->matches (QKeySequence::Replace)) {
+    DoReplace ();
+  }
 }
 
 } // namespace
