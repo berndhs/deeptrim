@@ -48,7 +48,7 @@
 #include <QListWidgetItem>
 #include <Qsci/qsciscintilla.h>
 
-using namespace ;
+using namespace deliberate;
  
 namespace permute
 {
