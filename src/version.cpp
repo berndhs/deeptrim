@@ -8,7 +8,7 @@
 /****************************************************************
  * This file is distributed under the following license:
  *
- * Copyright (C) 2010, Bernd Stramm
+ * Copyright (C) 2010, 2011, Bernd Stramm
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public License
@@ -28,7 +28,7 @@
  
 namespace deliberate {
 
-  QString ProgramVersion::VersionNumber ("0.0.7");
+  QString ProgramVersion::VersionNumber ("0.0.8");
 
   QString ProgramVersion::ProgramName("DeepTrim");
   QString ProgramVersion::copyright ("Copyright (C) 2010 Bernd Stramm");

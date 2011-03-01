@@ -2,15 +2,15 @@
 
 # configure script for
 #
-#  deeptrim text editor
+#  deeptrim
 #
-# Copyright (C) 2010 Bernd Stramm
+# Copyright (C) 2010,2011 Bernd Stramm
 #
 
 #/****************************************************************
 # * This file is distributed under the following license:
 # *
-# * Copyright (C) 2010, Bernd Stramm
+# * Copyright (C) 2010,2011 Bernd Stramm
 # *
 # *  This program is free software; you can redistribute it and/or
 # *  modify it under the terms of the GNU General Public License
@@ -69,6 +69,28 @@ findqmake () {
     fi
   fi
 }
+
+#
+# function to find distro
+#
+find_distro () {
+DISTRO=linux
+if [ -e /etc/system-release ]
+then
+  DISTRO=`head -1 /etc/system-release \
+         | awk '{print $1}' \
+         | tr '[:upper:]' '[:lower:]'`
+else
+  if [ -e /etc/issue ]
+  then
+    DISTRO=`head -1 /etc/issue \
+	| awk '{print $1}' \
+	| tr '[:upper:]' '[:lower:]'`
+  fi
+fi
+}
+
+
 find_lrelease () {
 
   LREL=`which lrelease`
@@ -127,6 +149,8 @@ usage () {
 COPYRIGHT=" Copyright (C) 2010 Bernd Stramm"
 PREFIX=/usr
 OPTIONS_FILE=options.pri
+COMMAND_LINE="$0 $*"
+find_distro
 
 # 
 # command line arguments:
@@ -175,6 +199,7 @@ if [ $OSLEN -gt 5 ] ; then
   MAKE_PROGRAM="mingw32-make.exe"
   QMAKE="qmake.exe"
   LRELEASE="lrelease.exe"
+  DISTRO="win32"
 else
   MAKE_PROGRAM="make"
   # 
@@ -184,6 +209,12 @@ else
   find_lrelease
 fi
 
+#
+# make options include file for qmake
+#
+echo "DISTRO = ${DISTRO}" > ${OPTIONS_FILE}
+echo "CONFIG += ${DISTRO}" >> ${OPTIONS_FILE}
+echo "DEFINES += DISTRO_${DISTRO}=1" >> ${OPTIONS_FILE}
 #
 # generate Makefile
 #
@@ -207,8 +238,18 @@ cat Makefile.in >> Makefile
 #
 # tell the user what to do next
 #
-echo ""
-echo "qmake is                  " $QMAKE
-echo "Installation prefix is    " $PREFIX
-echo "Now you can build with    " $MAKE_PROGRAM
+showmsg () {
+  echo "     " $* 
+  echo $* >> config.last
+}
+
+echo "" > config.last
+
+showmsg `date -R`
+showmsg $COMMAND_LINE
+showmsg ""
+showmsg 'qmake is..................' $QMAKE
+showmsg 'Installation prefix is....' $PREFIX 
+showmsg 'Distro setting is.........' $DISTRO
+showmsg 'Now you can build with....' $MAKE_PROGRAM 
 
