@@ -48,8 +48,12 @@ main (int argc, char *argv[])
   QStringList  configMessages;
 
   deliberate::CmdOptions  opts ("deeptrim");
-  opts.AddSoloOption ("debug","D",QObject::tr("show Debug log window"));
-  opts.AddStringOption ("logdebug","L",QObject::tr("write Debug log to file"));
+  opts.AddSoloOption ("debug","D",
+                       QObject::tr("show Debug log window"));
+  opts.AddStringOption ("logdebug","L",
+                       QObject::tr("write Debug log to file"));
+  opts.AddSoloOption ("alone","A",
+                       QObject::tr("run sepate from other instances"));
 
   deliberate::UseMyOwnMessageHandler ();
 
@@ -87,7 +91,7 @@ main (int argc, char *argv[])
   }
 #endif
   permute::PermuteStarter Starter (app, configMessages, opts.Arguments());
-  Starter.Run ();
+  Starter.Run (!opts.SeenOpt ("alone"));
   result = app.exec ();
   qDebug () << " QApplication exec finished " << result;
   return result;

@@ -44,7 +44,7 @@ public:
                    QObject *parent=0);
   ~PermuteStarter ();
 
-  void Run ();
+  void Run (bool useDBus=true);
 
 private slots:
 
@@ -52,7 +52,7 @@ private slots:
 
 private:
 
-  void RunPermute ();
+  void RunPermute (bool useDBus);
 
   QApplication  & theApp;
   const QStringList   & theConfigMessages;

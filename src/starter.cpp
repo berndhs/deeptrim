@@ -51,23 +51,27 @@ PermuteStarter::~PermuteStarter ()
 }
 
 void
-PermuteStarter::Run ()
+PermuteStarter::Run (bool useDBus)
 {
-  remote = new local::BerndStramm::permute::IpcServer
+  if (useDBus) {
+    remote = new local::BerndStramm::permute::IpcServer
                  (PERMUTE_DBUS_SERVICE,
                   "/Server",
                   QDBusConnection::sessionBus(),
                   this);
-  if (remote->isValid ()) {  
-    // found server, hand off the files and quit
-    for (int a=0; a<theArgv.size(); a++) {
-      QFileInfo info (theArgv.at(a));
-      remote->TakeFile (info.absoluteFilePath());
+    if (remote->isValid ()) {  
+      // found server, hand off the files and quit
+      for (int a=0; a<theArgv.size(); a++) {
+        QFileInfo info (theArgv.at(a));
+        remote->TakeFile (info.absoluteFilePath());
+      }
+      QTimer::singleShot (100, this, SLOT (Quit ()));
+    } else {
+      // no server, have to do it myself
+      RunPermute (useDBus);
     }
-    QTimer::singleShot (100, this, SLOT (Quit ()));
   } else {
-    // no server, have to do it myself
-    RunPermute ();
+    RunPermute (useDBus);
   }
 }
 
@@ -78,7 +82,7 @@ PermuteStarter::Quit ()
 }
 
 void
-PermuteStarter::RunPermute ()
+PermuteStarter::RunPermute (bool useDBus)
 { 
   permuteMain = new Permute;
   permuteMain->setWindowTitle ("DeepTrim");
@@ -87,10 +91,12 @@ PermuteStarter::RunPermute ()
   permuteMain->AddConfigMessages (theConfigMessages);
   permuteMain->CommandArgs (theArgv);
 
-  server = new IpcServer (permuteMain, this);
-  adapt = new IpcServerAdaptor (server);
-  dbusConn.registerObject ("/Server",server);
-  dbusConn.registerService (PERMUTE_DBUS_SERVICE);
+  if (useDBus) {
+    server = new IpcServer (permuteMain, this);
+    adapt = new IpcServerAdaptor (server);
+    dbusConn.registerObject ("/Server",server);
+    dbusConn.registerService (PERMUTE_DBUS_SERVICE);
+  }
   permuteMain->Run ();
 }
 
