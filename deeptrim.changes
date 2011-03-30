@@ -1,0 +1,29 @@
+* Tue Mar 29 2011 Bernd Stramm <bernd.stramm@gmail.com> - 0.0.8
+- update packaging
+
+* Mon Dec 06 2010 Bernd Stramm <bernd.stramm@gmail.com> - 0.0.7-1
+- even more improved shortcuts
+
+* Sun Dec 05 2010 Bernd Stramm <bernd.stramm@gmail.com> - 0.0.5-1
+- correct line number to display 1-based
+- handle ambiguous shortcut keys better
+
+* Thu Dec 02 2010 Bernd Stramm <bernd.stramm@gmail.com> - 0.0.5-1
+- add files from command line to already running instance
+- cosmetic stuff
+
+* Wed Nov 03 2010 Bernd Stramm <bernd.stramm@gmail.com> - 0.0.4-1
+- jump to line
+- misc cosmetic details
+
+* Sun Oct 31 2010 Bernd Stramm <bernd.stramm@gmail.com> - 0.0.3-1
+- file load/save/refresh
+- search/replace
+- various window management issues 
+- docking window issues
+- font configuration for file types
+- lexers for file types
+
+* Thu Oct 28 2010 Bernd Stramm <bernd.stramm@gmail.com> - 0.0.1-1
+- Initial RPM build
+
