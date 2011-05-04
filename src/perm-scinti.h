@@ -1,3 +1,5 @@
+#ifndef PERMUTE_SCINTI_H
+#define PERMUTE_SCINTI_H
 
 
 /****************************************************************
@@ -21,3 +23,28 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
+
+#include <Qsci/qsciscintilla.h>
+#include <QMouseEvent>
+
+namespace permute
+{
+
+/** \brief A class to filter mouse events for the editor */
+
+class Scinti: public QsciScintilla
+{
+Q_OBJECT
+public:
+
+  Scinti (QWidget *parent=0);
+
+protected:
+
+  void mousePressEvent(QMouseEvent *e);
+
+};
+
+} // namespace
+
+#endif

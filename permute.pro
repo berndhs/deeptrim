@@ -96,6 +96,7 @@ HEADERS = \
           src/ipc_proxy.h \
           src/edit-key-filter.h \
           src/spin-event-filter.h \
+          src/perm-scinti.h \
 
 
 SOURCES = \
@@ -118,4 +119,5 @@ SOURCES = \
           src/ipc_proxy.cpp \
           src/edit-key-filter.cpp \
           src/spin-event-filter.cpp \
+          src/perm-scinti.cpp \
 

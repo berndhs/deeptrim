@@ -182,7 +182,7 @@
      </layout>
     </item>
     <item row="1" column="0">
-     <widget class="QsciScintilla" name="scin">
+     <widget class="permute::Scinti" name="scin" native="true">
       <property name="toolTip">
        <string/>
       </property>
@@ -197,9 +197,9 @@
  <layoutdefault spacing="1" margin="1"/>
  <customwidgets>
   <customwidget>
-   <class>QsciScintilla</class>
-   <extends>QFrame</extends>
-   <header>Qsci/qsciscintilla.h</header>
+   <class>permute::Scinti</class>
+   <extends>QWidget</extends>
+   <header location="global">src/perm-scinti.h</header>
   </customwidget>
  </customwidgets>
  <resources>

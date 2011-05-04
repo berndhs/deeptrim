@@ -1,3 +1,4 @@
+#include "perm-scinti.h"
 
 
 /****************************************************************
@@ -21,3 +22,25 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
+#include <Qt>
+
+namespace permute
+{
+
+Scinti::Scinti (QWidget *parent)
+  :QsciScintilla (parent)
+{
+}
+
+void
+Scinti::mousePressEvent (QMouseEvent *event)
+{
+  if (event) {
+    if (event->button() == Qt::MidButton) {
+      return;
+    }
+  }
+  QsciScintilla::mousePressEvent (event);
+}
+
+} // namespace

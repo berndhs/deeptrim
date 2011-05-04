@@ -1,3 +1,6 @@
+* Wed May 04 2011 Bernd Stramm <bernd.stramm@gmail.com> - 0.0.9-1
+- filter out middle-button mouse clicks, so they do not paste in editor
+
 * Tue Mar 29 2011 Bernd Stramm <bernd.stramm@gmail.com> - 0.0.8-1
 - update packaging
 
