@@ -56,12 +56,13 @@ Permute::Permute (QWidget *parent)
   :QMainWindow (parent),
    app (0),
    configEdit (this),
-   hiddenBox (false),
+   hiddenBox (0),
    helpView (0),
    searcher (this),
    again (false),
    tooltiplen (40),
-   emphedBox (0)
+   emphedBox (0),
+   useless (42)
 {
   ui.setupUi (this);
   setDockOptions (QMainWindow::AnimatedDocks
