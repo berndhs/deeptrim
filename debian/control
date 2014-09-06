@@ -1,0 +1,13 @@
+Source: deeptrim
+Section: user/other
+Priority: optional
+Maintainer: Bernd Stramm <bernd.stramm@gmail.com>
+Build-Depends: debhelper (>= 5), libqt4-dev,, libqt4-xml, qscintilla-dev
+Standards-Version: 3.7.3
+Homepage: http://bernhs.users.sourceforge.net
+
+Package: deeptrim
+Description: Text Editor
+ There are dozens of text editors for Linux. This is one of them.
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
