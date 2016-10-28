@@ -61,8 +61,7 @@ Permute::Permute (QWidget *parent)
    searcher (this),
    again (false),
    tooltiplen (40),
-   emphedBox (0),
-   useless (42)
+   emphedBox (0)
 {
   ui.setupUi (this);
   setDockOptions (QMainWindow::AnimatedDocks

@@ -42,6 +42,7 @@
 #include <QGroupBox>
 #include <QSpinBox>
 #include <QPushButton>
+#include <QDateTime>
 #include <QCursor>
 #include "lexer-chooser.h"
 #include "deliberate.h"
@@ -139,6 +140,7 @@ PermEditBox::SetupMenus ()
   actionLoad = new QAction (tr("Open File"),this);
   actionReload = new QAction (tr("Revert File"),this);
   actionInsertFile = new QAction (tr("Insert File"), this);
+  actionInfo = new QAction (tr("File Info"),this);
 
   actionFontLocal = new QAction (tr("Font for file"),this);
   actionFontGlobal = new QAction (tr("Font for file type"),this);
@@ -156,6 +158,7 @@ PermEditBox::SetupMenus ()
   fileMenu->addAction (actionLoad);
   fileMenu->addAction (actionReload);
   fileMenu->addAction (actionInsertFile);
+  fileMenu->addAction (actionInfo);
   fileMenu->addAction (actionClose);
 
   configMenu->addAction (actionFontLocal);
@@ -253,6 +256,8 @@ PermEditBox::Connect ()
            this, SLOT (LangAction ()));
   connect (actionClose, SIGNAL (triggered()),
            this, SLOT (CloseAction ()));
+  connect (actionInfo, SIGNAL (triggered()),
+           this, SLOT(FileInfo()));
   connect (scin, SIGNAL (cursorPositionChanged (int, int)),
            this, SLOT (CursorChange (int, int)));
   connect (scin, SIGNAL (modificationChanged(bool)),
@@ -639,6 +644,20 @@ PermEditBox::ShowJump ()
 {
   lineButton->hide ();
   jump->show ();
+}
+
+void 
+PermEditBox::FileInfo()
+{
+  QFileInfo info (currentFile);
+  QString fullName (QString (tr("File is: ")) + info.canonicalFilePath());
+  QString group (info.group());
+  QString own (info.owner());
+  QString lastMod (info.lastModified().toString(Qt::ISODate));
+  QString lastRead (info.lastRead().toString(Qt::ISODate));
+  QMessageBox::information(this,"File Info",fullName + "\ngroup/owner\t" + group+"/"+own
+                        + "\nmodified\t\t" + lastMod
+                        + "\nread\t\t" + lastRead);
 }
 
 QString

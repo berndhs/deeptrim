@@ -96,6 +96,7 @@ private slots:
   void JumpLine (bool button=false);
   void LinesChanged ();
   void ShowJump ();
+  void FileInfo ();
 
 signals:
 
@@ -140,6 +141,7 @@ private:
   QAction          *actionReload;
   QAction          *actionInsertFile;
   QAction          *actionClose;
+  QAction          *actionInfo;
 
   QString           normalStyle;
   QString           emphStyle;
